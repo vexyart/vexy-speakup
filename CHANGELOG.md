@@ -1,7 +1,7 @@
 <!-- this_file: CHANGELOG.md -->
 # Changelog
 
-## Unreleased
+## 1.0.0
 - Added `build.sh` (test, build, twine check) and `publish.sh` (test,
   gitnextver tag, build, `uv publish` with retry on rate limits).
 - Ported the `speech-polish` script collection into the installable

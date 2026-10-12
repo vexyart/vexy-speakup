@@ -207,6 +207,7 @@ tempCodeRunnerFile.py
 
 # Ruff stuff:
 .ruff_cache/
+.omc/
 
 # PyPI configuration file
 .pypirc
@@ -218,3 +219,23 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# hatch-vcs writes the version file at build time.
+__version__.py
+
+# Private recordings, processing runs and evidence never belong in this repo.
+.DS_Store
+*.mp4
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.aif
+*.aiff
+*.ogg
+*.opus
+*_improved*
+*_attempts/
+run-*/
+evidence/
+private/

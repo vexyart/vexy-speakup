@@ -1,0 +1,27 @@
+{
+  "this_file": "examples/custom-chain.example.json",
+  "speech": [
+    {
+      "path": "/Library/Audio/Plug-Ins/VST3/Accentize-dxRevivePro.vst3",
+      "parameters": {"mix": 65.0, "bypass": false}
+    }
+  ],
+  "speakers": {
+    "0": [
+      {
+        "path": "/Library/Audio/Plug-Ins/VST3/RX 12 Mouth De-click.vst3",
+        "parameters": {"sensitivity": 3.0, "output_clicks_only": false, "global_bypass": false}
+      },
+      {
+        "path": "/Library/Audio/Plug-Ins/VST3/Accentize-dxRevivePro.vst3",
+        "parameters": {"mix": 35.0, "bypass": false}
+      }
+    ]
+  },
+  "master": [
+    {
+      "path": "/Library/Audio/Plug-Ins/VST3/Ozone 12 Maximizer.vst3",
+      "parameters": {"max_output_level": -2.0, "max_input_gain_db": 0.0, "global_bypass": false}
+    }
+  ]
+}

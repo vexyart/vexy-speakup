@@ -1,0 +1,60 @@
+# this_file: src_docs/mkdocs.yml
+site_name: vexy-speakup
+site_description: Diarize, restore, level and master recorded speech with local VST3 plugins, keeping the video timeline
+site_url: https://vexy.dev/vexy-speakup/
+repo_url: https://github.com/vexyart/vexy-speakup
+repo_name: vexyart/vexy-speakup
+edit_uri: edit/main/src_docs/md/
+docs_dir: md
+site_dir: ../docs
+use_directory_urls: true
+theme:
+  name: materialx
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle: {icon: material/brightness-7, name: Switch to dark mode}
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle: {icon: material/brightness-4, name: Switch to light mode}
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc: {permalink: true}
+  - pymdownx.details
+  - pymdownx.highlight: {anchor_linenums: true}
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.superfences
+  - pymdownx.tabbed: {alternate_style: true}
+  - pymdownx.tasklist: {custom_checkbox: true}
+plugins:
+  - search
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Quickstart: quickstart.md
+  - Command reference: cli.md
+  - Profiles and custom chains: configuration.md
+  - How processing works: processing.md
+  - Run folders and reports: outputs.md
+  - Local models: local-models.md
+  - Troubleshooting: troubleshooting.md
+  - Development: development.md
+  - Changelog: changelog.md

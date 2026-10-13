@@ -1,24 +1,19 @@
 #!/usr/bin/env bash
 # this_file: build.sh
-# Test, build and check the sdist and wheel in dist/.
-# The version comes from the git tag on HEAD (hatch-vcs). An untagged or dirty
-# tree builds a dev version with a local segment, which PyPI rejects.
-# Usage: ./build.sh [--skip-tests]
+# Build the documentation (docs/) and the Python package (dist/).
+# Usage: ./build.sh [all|docs|package]   (default: all)
 set -euo pipefail
-cd "$(dirname "$0")"
-
-if [[ "${1:-}" != "--skip-tests" ]]; then
-    echo "== test =="
-    ./test.sh
+cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
+target="${1:-all}"
+case "$target" in
+  all|docs|package) ;;
+  *) echo "usage: $0 [all|docs|package]" >&2; exit 2 ;;
+esac
+if [[ "$target" == all || "$target" == docs ]]; then
+  src_docs/build.sh
 fi
-
-echo "== clean =="
-rm -rf dist
-
-echo "== uv build =="
-uv build
-
-echo "== twine check =="
-uvx twine check --strict dist/*
-
-ls -1 dist
+if [[ "$target" == all || "$target" == package ]]; then
+  rm -rf dist
+  uv build
+  uvx twine check dist/*
+fi

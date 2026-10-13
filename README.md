@@ -1,6 +1,8 @@
 <!-- this_file: README.md -->
 # vexy-speakup
 
+**Documentation:** https://vexy.dev/vexy-speakup/
+
 Restore a meeting recording with your installed VST3 speech plugins, one speaker
 at a time, and get back the same file with the original video timeline intact.
 
@@ -145,15 +147,20 @@ from the source and wheel allowlists, and nothing is uploaded.
 
 ```bash
 ./test.sh                 # pytest with coverage, then ruff
-./build.sh                # tests, uv build, twine check; version from git tag
-./publish.sh              # tag, build, uv publish to PyPI
+./build.sh                # docs into docs/, then uv build and twine check
+./build.sh docs           # documentation only (src_docs/build.sh)
+./build.sh package        # package only
+./publish.sh              # gitnextver tag, build, uv publish to PyPI
 ```
 
 Tag releases with `uvx gitnextver`. Untagged commits build as development
 versions with a local segment, which PyPI rejects. The generated
 `src/vexy_speakup/__version__.py` is ignored by git.
 
-`./publish.sh` runs the tests, then `uvx gitnextver`, which commits all
-changes, creates the next `vX.Y.Z` tag (`v1.0.0` when none exists) and pushes.
-It then builds and runs `uv publish`. A rerun on a clean, already tagged HEAD
-skips gitnextver.
+`./publish.sh` runs `uvx gitnextver`, which commits all changes, creates the
+next `vX.Y.Z` tag and pushes. It stops if HEAD carries no such tag, then builds
+the package and runs `uv publish`. It does not run the tests, so run
+`./test.sh` first.
+
+The documentation source is in `src_docs/md/`; `src_docs/build.sh` builds it
+into `docs/`, which GitHub Pages serves.

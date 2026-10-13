@@ -239,3 +239,8 @@ __version__.py
 run-*/
 evidence/
 private/
+
+# Tooling
+.venv/
+site/
+node_modules/

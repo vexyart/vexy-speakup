@@ -10,8 +10,8 @@ one that sounds best.
   [Installation](installation.md).
 - The plugins used by the built-in profiles are installed: Accentize dxRevive
   Pro, iZotope RX 12 Voice De-noise and iZotope Ozone 12 Maximizer.
-- `VEXY_SPEAKUP_TTS_ROOT` points to the local model adapters. If you do not have
-  them, skip to [Process without local models](#process-without-local-models).
+- The local models are installed with `uv pip install 'vexy-speakup[models]'`.
+  The first run downloads their weights. If you do not want them, skip to [Process without local models](#process-without-local-models).
 
 ## Compare profiles on an excerpt
 
@@ -68,7 +68,7 @@ so the earlier run stays available.
 
 ## Process without local models
 
-Without `VEXY_SPEAKUP_TTS_ROOT`, give the tool your own speaker turns and turn off
+Without the `models` extra, give the tool your own speaker turns and turn off
 scoring.
 
 1. Write `turns.json` with one entry per turn. Times are in seconds from the start

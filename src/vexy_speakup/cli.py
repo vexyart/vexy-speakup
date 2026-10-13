@@ -3,7 +3,6 @@
 
 import json
 import math
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -12,6 +11,7 @@ import soundfile as sf
 
 from . import __version__
 from .audit import attempts, evaluate_windows, inspect, inventory, probe_plugin
+from .effects import brighten
 from .media import decode, destinations, probe, publish, sha, write_json
 from .models import deepfilter, diarize
 from .pipeline import (
@@ -21,6 +21,7 @@ from .pipeline import (
     prepare_jobs,
     render_speakers,
 )
+from .settings import config_file, init_config, read_settings, validate_chain
 from .vst import profile, render_jobs, render_master
 
 
@@ -29,13 +30,13 @@ def run(
     work_dir: str = "",
     output_path: str = "",
     suffix: str = "_improved",
-    profile_name: str = "dx35",
+    profile_name: str | None = None,
     config_path: str = "",
     diarizer: str = "mlx",
     diarization_json: str = "",
-    target_lufs: float = -16,
-    true_peak: float = -2,
-    max_chunk: float = 30,
+    target_lufs: float | None = None,
+    true_peak: float | None = None,
+    max_chunk: float | None = None,
     start: float = 0,
     duration: float = 0,
     evaluate: bool = True,
@@ -44,6 +45,9 @@ def run(
     timeout: int = 1800,
     force: bool = False,
     verbose: bool = False,
+    workers: int | None = None,
+    brightness_db: float | None = None,
+    _decoded_audio: str = "",
 ) -> str:
     """Process audio/video. Preview with --start/--duration; default processes the full file.
 
@@ -52,6 +56,17 @@ def run(
     --ai=deepfilter adds the locally cached DF3 CoreML pass before VSTs.
     Evaluation uses three up-to-30s speech windows, not the entire recording.
     """
+    settings = read_settings()["processing"]
+    profile_name = settings["profile"] if profile_name is None else profile_name
+    target_lufs = settings["target_lufs"] if target_lufs is None else target_lufs
+    true_peak = settings["true_peak"] if true_peak is None else true_peak
+    max_chunk = settings["max_chunk"] if max_chunk is None else max_chunk
+    workers = settings["workers"] if workers is None else workers
+    brightness_db = (
+        settings["brightness_db"] if brightness_db is None else brightness_db
+    )
+    if type(workers) is not int or not 1 <= workers <= 128:
+        raise ValueError("workers must be an integer in [1,128]")
     source = Path(input_path).expanduser().resolve()
     if not source.is_file():
         raise FileNotFoundError(source)
@@ -102,14 +117,11 @@ def run(
         if config_path
         else profile(profile_name)
     )
-    if not isinstance(config.get("speech"), list) or not isinstance(
-        config.get("master"), list
-    ):
-        raise TypeError("Config requires speech and master chain arrays")
+    config = brighten(config, brightness_db)
+    validate_chain(config)
     work.mkdir(parents=True, exist_ok=True)
     session = work / datetime.now().astimezone().strftime("run-%Y%m%d-%H%M%S-%f")
     session.mkdir()
-    os.environ["HF_HUB_OFFLINE"] = "1"
     report = {
         "input": str(source),
         "input_sha256": sha(source),
@@ -119,20 +131,32 @@ def run(
         "profile": profile_name,
         "config": config,
         "ai": ai,
+        "diarizer": diarizer,
         "preview_start": start,
         "target_lufs": target_lufs,
         "true_peak": true_peak,
         "status": "running",
+        "workers": workers,
+        "max_chunk": max_chunk,
+        "brightness_db": brightness_db,
     }
     write_json(session / "report.json", report)
     try:
         print(f"Work: {session}", flush=True)
-        audio = session / "input.wav"
-        decode(source, audio, start, duration, timeline=video)
+        audio = Path(_decoded_audio) if _decoded_audio else session / "input.wav"
+        if _decoded_audio:
+            cached = sf.info(audio)
+            if start or duration or cached.samplerate != 48000 or cached.channels != 2:
+                raise ValueError(
+                    "Prepared audio requires a full 48 kHz stereo timeline"
+                )
+            report["prepared_audio"] = str(audio)
+        else:
+            decode(source, audio, start, duration, timeline=video)
         seconds = sf.info(audio).duration
         turns = diarize(audio, session, diarizer, diarization_json, seconds, timeout)
         if verbose:
-            print(f"Diarized {seconds:.2f}s: {len(turns)} turns", flush=True)
+            print(f"Prepared {seconds:.2f}s: {len(turns)} speech intervals", flush=True)
         restored = audio
         if ai == "deepfilter":
             mono = session / "deepfilter-mono.wav"
@@ -142,7 +166,7 @@ def run(
             if sf.info(restored).frames != sf.info(audio).frames:
                 raise ValueError("AI enhancement changed duration")
         jobs, groups = prepare_jobs(restored, turns, session, config, max_chunk)
-        render_speakers(groups, session, config, timeout, verbose)
+        render_speakers(groups, session, config, timeout, verbose, workers)
         if verbose:
             print("Leveling fragments and assembling the original timeline", flush=True)
         joined = assemble(restored, jobs, session, target_lufs - 2)
@@ -173,6 +197,7 @@ def run(
         report["publication"] = publish(
             source, final, output, output_video, true_peak, target_lufs, force
         )
+        report["output_sha256"] = sha(output)
         report["status"] = "complete"
         write_json(session / "report.json", report)
         write_json(
@@ -209,19 +234,50 @@ def version() -> str:
     return __version__
 
 
+def gui(input_dir: str = "", port: int = 8765, open_browser: bool = True) -> None:
+    """Open the local browser listening interface (install vexy-speakup[gui])."""
+    try:
+        from .web import gui as launch_gui
+    except ModuleNotFoundError as exc:
+        if exc.name in {"fastapi", "uvicorn"}:
+            raise RuntimeError(
+                "Install the GUI extra: uv tool install 'vexy-speakup[gui]'"
+            ) from exc
+        raise
+    launch_gui(input_dir, port, open_browser)
+
+
 def main() -> None:
-    fire.Fire(
+    from . import assets
+    from .batch import create_job
+    from .queue import batch, run_job
+
+    result = fire.Fire(
         {
             "run": run,
+            "gui": gui,
+            "batch": batch,
+            "schedule": create_job,
+            "job": run_job,
             "attempts": attempts,
             "inspect": inspect,
             "inventory": inventory,
             "probe": probe_plugin,
             "version": version,
+            "assets": {"fetch": assets.fetch, "list": assets.listing},
+            "config": {
+                "path": lambda: str(config_file()),
+                "init": lambda output_path="": str(init_config(output_path)),
+                "show": lambda: json.dumps(read_settings(), indent=2),
+            },
             "_render": _render,
             "_master": _master,
         }
     )
+    if isinstance(result, dict) and result.get("status") == "failed":
+        raise SystemExit(1)
+    if isinstance(result, dict) and result.get("status") == "cancelled":
+        raise SystemExit(130)
 
 
 if __name__ == "__main__":

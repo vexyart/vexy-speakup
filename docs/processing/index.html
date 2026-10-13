@@ -13,10 +13,10 @@
         <link rel="canonical" href="https://vexy.dev/vexy-speakup/processing/">
       
       
-        <link rel="prev" href="../configuration/">
+        <link rel="prev" href="../listening/">
       
       
-        <link rel="next" href="../outputs/">
+        <link rel="next" href="../processing-details/">
       
       
         
@@ -30,7 +30,7 @@
           <link rel="icon" href="../assets/images/favicon.png">
         
       
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-materialx-10.2.0">
     
     
       
@@ -38,7 +38,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7aee198.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.a45159b5.min.css">
@@ -192,7 +192,7 @@
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0">
-        <div class="md-search-result" data-md-component="search-result">
+        <div class="md-search-result md-search-result--pagefind" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
@@ -404,6 +404,60 @@
       
   
   
+
+
+    <li class="md-nav__item">
+      <a href="../batch/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Folder jobs and saved choices
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../listening/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Listen and choose in your browser
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
     
   
   
@@ -601,6 +655,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../processing-details/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Processing details and limits
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../outputs/" class="md-nav__link">
         
@@ -888,7 +969,9 @@
           
             <div class="md-content" data-md-component="content">
               
-              <article class="md-content__inner md-typeset">
+
+
+              <article class="md-content__inner md-typeset" data-pagefind-body>
                 
                   
   
@@ -998,9 +1081,11 @@ twice.</p>
 available, and saved as <code>speakers/&lt;owner&gt;/NNNNNN-context.wav</code>. The context gives
 plugins a run-up and is removed again later.</p>
 <h2 id="5-render-each-speaker">5. Render each speaker<a class="headerlink" href="#5-render-each-speaker" title="Permanent link">&para;</a></h2>
-<p>Each owner with speech (<code>A</code>, <code>B</code> and <code>_overlap</code>) gets one worker process that
-loads its chain once: the owner's chain from <code>speakers</code> in a custom chain file,
-or the shared <code>speech</code> chain. Background intervals are not rendered.</p>
+<p>Each owner with speech (<code>A</code>, <code>B</code> and <code>_overlap</code>) has its chunks distributed to
+isolated workers, up to the configured worker budget. Each worker loads its
+chain once: the owner's chain from <code>speakers</code> in a custom chain file, or the
+shared <code>speech</code> chain. Background intervals are not rendered. Whole-recording
+mode (<code>--diarizer=none</code>) explicitly uses one uniform chain over the full signal.</p>
 <p>For each fragment, the worker:</p>
 <ol>
 <li>resets the plugin state,</li>
@@ -1030,9 +1115,11 @@ shorter than 400 ms are padded with silence for the measurement only.</p>
 <code>fragments.json</code>.</p>
 <h2 id="7-assemble">7. Assemble<a class="headerlink" href="#7-assemble" title="Permanent link">&para;</a></h2>
 <p>The fragments are written in timeline order to <code>assembled.wav</code>. The context
-margins are cropped away, and each processed fragment is blended with the
-original over 10 ms at both ends to avoid clicks. Background intervals are copied
-from the source unchanged. If the assembled file has a different number of
+margins are cropped away. Neighbouring fragments crossfade into each other over
+40 ms centred on each cut, using both fragments' own audio (renders keep half a
+second of context), so two speakers' chains meet directly rather than through
+unprocessed audio. Background intervals are copied from the source and crossfade
+the same way. The first and last samples are never faded. If the assembled file has a different number of
 samples from the input, the run stops.</p>
 <h2 id="8-master">8. Master<a class="headerlink" href="#8-master" title="Permanent link">&para;</a></h2>
 <ol>
@@ -1122,7 +1209,7 @@ output.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../configuration/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Profiles and custom chains">
+          <a href="../listening/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Listen and choose in your browser">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
@@ -1132,20 +1219,20 @@ output.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Profiles and custom chains
+                Listen and choose in your browser
               </div>
             </div>
           </a>
         
         
           
-          <a href="../outputs/" class="md-footer__link md-footer__link--next" aria-label="Next: Run folders and reports">
+          <a href="../processing-details/" class="md-footer__link md-footer__link--next" aria-label="Next: Processing details and limits">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Run folders and reports
+                Processing details and limits
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1182,10 +1269,17 @@ output.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+
+
+
+
+
+
+
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": {"options": {"baseUrl": "..", "bundleUrl": "../search/", "highlight": true, "searchOptions": {}}, "provider": "pagefind"}, "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.offline": "Switch to Lunr for offline search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      <script src="../assets/javascripts/bundle.44453a05.min.js"></script>
       
     
   </body>

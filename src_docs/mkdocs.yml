@@ -52,7 +52,10 @@ nav:
   - Quickstart: quickstart.md
   - Command reference: cli.md
   - Profiles and custom chains: configuration.md
+  - Folder jobs and saved choices: batch.md
+  - Listen and choose in your browser: listening.md
   - How processing works: processing.md
+  - Processing details and limits: processing-details.md
   - Run folders and reports: outputs.md
   - Local models: local-models.md
   - Troubleshooting: troubleshooting.md

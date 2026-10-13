@@ -39,7 +39,7 @@ def evaluate_windows(
             metric_dir.mkdir()
             try:
                 row[label] = score(dest, metric_dir, python=python)["scores"]
-            except (OSError, RuntimeError, ValueError) as exc:
+            except (OSError, ImportError, RuntimeError, ValueError) as exc:
                 row[label] = {"error": str(exc)}
         rows.append(row)
     write_json(work / "evaluation.json", rows)

@@ -1,5 +1,32 @@
 # Profiles and custom chains
 
+Application settings are TOML, stored at the platformdirs user config path:
+
+```bash
+vexy-speakup config path
+vexy-speakup config init
+vexy-speakup config show
+```
+
+`VEXY_SPEAKUP_CONFIG` selects another file. `[paths]` sets `plugin_root`; the root
+environment variable takes precedence. An old `tts_root` key still loads and is
+ignored. `[processing]` sets
+profile, worker count, max chunk, loudness, peak and brightness defaults;
+explicit CLI options take precedence. `[candidates.NAME]` sets a profile alias
+and unique output suffix, or explicit speech/master/speaker chains. Relative
+plugin paths in TOML candidates resolve under `plugin_root`.
+
+The four default listening candidates are `podcast`, `dx35`, `dx35-bright` and
+`clear`. `podcast` uses installed GPL PodcastPlugins TRACK/MASTER; `clear` uses
+Supertone Clear before Ozone mastering. `podcast-bright` sets TRACK TIMBRE to +2.
+`dx35-bright` adds a 3 dB shelf above 3 kHz. `--brightness_db` / TOML
+`brightness_db` adds a shelf to shared and overridden speaker chains, in the
+range [-12,12] dB. Zero is neutral. Missing plugins fail explicitly.
+
+`path = "builtin:high-shelf"` selects Pedalboard's open-source high-shelf effect
+with `cutoff_frequency_hz`, `gain_db` and `q` parameters; it works in TOML and
+JSON chains. This reserved path is not resolved as a VST bundle filename.
+
 A chain is an ordered list of VST3 plugins. `vexy-speakup` uses two kinds:
 
 - **Speech chains** process each speaker's fragments separately. The plugin state

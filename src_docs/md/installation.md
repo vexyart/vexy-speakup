@@ -70,19 +70,49 @@ plugin, so it is a quick way to check the folder setting.
 The variable affects the built-in profiles and `inventory`. A custom chain file
 uses the full `path` written in each plugin entry.
 
-## Local model adapters
+## Local models
 
-Automatic diarization, the optional DeepFilterNet pass and quality scoring call
-local adapters that live outside this package. Point `VEXY_SPEAKUP_TTS_ROOT` at
-the folder that holds them:
+Automatic diarization, the optional DeepFilterNet pass and quality scoring need
+the optional `models` extra (macOS Apple Silicon):
 
 ```bash
-export VEXY_SPEAKUP_TTS_ROOT=/path/to/tts
+uv pip install 'vexy-speakup[models]'
 ```
 
-[Local models](local-models.md) lists what the folder must contain. You can
-process recordings without it by supplying speaker turns and turning scoring off:
+It adds `mlx-audio`, `huggingface-hub`, `onnxruntime`, `sentencepiece` and
+`speechonnxmetrics`. Weights download on first use into the Hugging Face cache.
+[Local models](local-models.md) lists them. You can process recordings without
+the extra by supplying speaker turns and turning scoring off:
 
 ```bash
 vexy-speakup run meeting.m4a --diarization_json=turns.json --evaluate=False
 ```
+
+## Free plugins
+
+Four GPL-3.0 plugins are available without installing them yourself:
+PodcastPlugins (TRACK, MASTER), master_me, Noise Repellent and Vocal Gate. They
+are stored with Git LFS in
+[vexy-speakup-assets](https://github.com/vexyart/vexy-speakup-assets), with
+builds for macOS and Windows x64. The package pins the
+repository commit and each file's SHA-256.
+
+When a chain names a plugin that is not in your VST3 folder, the bundled copy is
+downloaded on first use. To download everything up front, or to see what is
+installed:
+
+```bash
+vexy-speakup assets fetch
+vexy-speakup assets list
+```
+
+Bundles go to the user data folder (`~/Library/Application Support/vexy-speakup/plugins/`
+on macOS). Set `VEXY_SPEAKUP_ASSETS_DIR` to use another folder.
+
+On Windows, Vocal Gate exists only as its vendor installer. `assets fetch` (or
+the first chain that uses it) runs that installer silently. Windows asks for
+administrator rights; the plugin goes to
+`C:\Program Files\Common Files\VST3\Vocal Gate.vst3` together with the Visual C++
+runtime it needs. Remove it from Settings > Apps. If you decline the prompt, the
+plugin is reported as not installed and the installer log is kept beside the
+other assets. `assets list` shows each plugin's install method.

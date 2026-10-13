@@ -28,12 +28,33 @@ dependencies = [
     "fire>=0.7.1,<0.8",
     "numpy>=2,<3",
     "pedalboard==0.9.26",
+    "platformdirs>=4,<5",
+    "pydantic>=2.10,<3",
     "pyloudnorm>=0.2,<0.3",
     "soundfile>=0.13.1,<0.14",
+    "tomli-w>=1,<2",
 ]
 
 [project.optional-dependencies]
-test = ["pytest>=8", "pytest-cov>=6", "ruff>=0.12", "build>=1.2", "twine>=6"]
+test = [
+    "pytest>=8",
+    "pytest-cov>=6",
+    "ruff>=0.12",
+    "build>=1.2",
+    "twine>=6",
+    "httpx>=0.28,<1",
+]
+models = [
+    "huggingface-hub>=1,<2",
+    "mlx-audio==0.5.7; sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "onnxruntime>=1.17",
+    "sentencepiece>=0.2",
+    "speechonnxmetrics[audio]==0.0.2a3",
+]
+gui = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+]
 
 [project.scripts]
 vexy-speakup = "vexy_speakup.cli:main"

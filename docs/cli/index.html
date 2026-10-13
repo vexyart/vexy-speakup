@@ -30,7 +30,7 @@
           <link rel="icon" href="../assets/images/favicon.png">
         
       
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-materialx-10.2.0">
     
     
       
@@ -38,7 +38,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7aee198.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.a45159b5.min.css">
@@ -192,7 +192,7 @@
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0">
-        <div class="md-search-result" data-md-component="search-result">
+        <div class="md-search-result md-search-result--pagefind" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
@@ -581,6 +581,60 @@
   
   
     <li class="md-nav__item">
+      <a href="../batch/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Folder jobs and saved choices
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../listening/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Listen and choose in your browser
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
       <a href="../processing/" class="md-nav__link">
         
   
@@ -607,6 +661,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../processing-details/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Processing details and limits
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../outputs/" class="md-nav__link">
         
@@ -900,7 +981,9 @@
           
             <div class="md-content" data-md-component="content">
               
-              <article class="md-content__inner md-typeset">
+
+
+              <article class="md-content__inner md-typeset" data-pagefind-body>
                 
                   
   
@@ -989,7 +1072,7 @@ its flags:</p>
 <tr>
 <td><code>--diarizer</code></td>
 <td><code>mlx</code></td>
-<td><code>mlx</code> or <code>sortformer</code></td>
+<td><code>none</code> for a uniform recording, <code>mlx</code> or <code>sortformer</code> for speaker detection</td>
 </tr>
 <tr>
 <td><code>--diarization_json</code></td>
@@ -1029,7 +1112,7 @@ its flags:</p>
 <tr>
 <td><code>--metrics_python</code></td>
 <td>empty</td>
-<td>Python interpreter of the scoring environment</td>
+<td>optional interpreter with <code>vexy-speakup[models]</code> installed; default is the current one</td>
 </tr>
 <tr>
 <td><code>--ai</code></td>
@@ -1050,6 +1133,16 @@ its flags:</p>
 <td><code>--verbose</code></td>
 <td><code>False</code></td>
 <td>print each stage</td>
+</tr>
+<tr>
+<td><code>--workers</code></td>
+<td>TOML default: <code>4</code></td>
+<td>isolated chunk worker limit, [1,128]</td>
+</tr>
+<tr>
+<td><code>--brightness_db</code></td>
+<td>TOML default: <code>0</code></td>
+<td>3 kHz speech shelf gain, [-12,12] dB</td>
 </tr>
 </tbody>
 </table>
@@ -1139,7 +1232,7 @@ format (<code>.wav</code>, <code>.mp3</code>, <code>.m4a</code>, <code>.aac</cod
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span>--work_dir<span class="o">=</span>work<span class="w"> </span>--output_path<span class="o">=</span>result.mp4<span class="w"> </span><span class="se">\</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span>--target_lufs<span class="o">=</span>-16<span class="w"> </span>--true_peak<span class="o">=</span>-2<span class="w"> </span>--verbose
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Local DeepFilterNet3 CoreML pass before the VST chain</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Local DeepFilterNet3 (MLX) pass before the VST chain</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--ai<span class="o">=</span>deepfilter
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Reuse earlier or corrected speaker turns instead of running a diarizer</span>
@@ -1188,7 +1281,7 @@ listening. It prints the path of <code>comparison.json</code>.</p>
 <tr>
 <td><code>--metrics_python</code></td>
 <td>empty</td>
-<td>Python interpreter of the scoring environment</td>
+<td>optional interpreter with <code>vexy-speakup[models]</code> installed; default is the current one</td>
 </tr>
 <tr>
 <td><code>--verbose</code></td>
@@ -1201,8 +1294,7 @@ listening. It prints the path of <code>comparison.json</code>.</p>
 <code>mlx</code> diarizer, and writes <code>turns.json</code>. It then runs <code>run</code> once per profile with
 those turns, writing <code>&lt;profile&gt;.wav</code> and a <code>&lt;profile&gt;/</code> work folder. Finally it
 collects every run's report into <code>comparison.json</code>.</p>
-<p><code>attempts</code> always uses the <code>mlx</code> diarizer, so it needs
-<code>VEXY_SPEAKUP_TTS_ROOT</code>.</p>
+<p><code>attempts</code> always uses the <code>mlx</code> diarizer, so it needs the <code>models</code> extra.</p>
 <h2 id="inspect"><code>inspect</code><a class="headerlink" href="#inspect" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>vexy-speakup<span class="w"> </span>inspect<span class="w"> </span>PLUGIN_PATH<span class="w"> </span><span class="o">[</span>--output_path<span class="o">=</span>FILE<span class="o">]</span>
 </code></pre></div>
@@ -1253,14 +1345,10 @@ set.</p>
 <td><code>VEXY_SPEAKUP_PLUGIN_ROOT</code></td>
 <td>plugin folder for built-in profiles and <code>inventory</code></td>
 </tr>
-<tr>
-<td><code>VEXY_SPEAKUP_TTS_ROOT</code></td>
-<td>folder with the local model adapters</td>
-</tr>
 </tbody>
 </table>
-<p><code>run</code> also sets <code>HF_HUB_OFFLINE=1</code> for itself and its child processes, so model
-access never reaches the network.</p>
+<p>Model weights are cached in the standard Hugging Face cache (<code>HF_HOME</code> /
+<code>HF_HUB_CACHE</code>); see <a href="../local-models/">Local models</a>.</p>
 
 
 
@@ -1372,10 +1460,17 @@ access never reaches the network.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+
+
+
+
+
+
+
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": {"options": {"baseUrl": "..", "bundleUrl": "../search/", "highlight": true, "searchOptions": {}}, "provider": "pagefind"}, "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.offline": "Switch to Lunr for offline search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      <script src="../assets/javascripts/bundle.44453a05.min.js"></script>
       
     
   </body>

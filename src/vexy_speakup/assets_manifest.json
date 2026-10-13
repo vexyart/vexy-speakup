@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "plugins": [
+    {
+      "id": "podcast-plugins",
+      "name": "PodcastPlugins",
+      "version": "1.0.0",
+      "license": "GPL-3.0",
+      "license_file": "plugins/podcast-plugins/LICENSE",
+      "source": "https://github.com/trummerschlunk/PodcastPlugins",
+      "release": "https://github.com/trummerschlunk/PodcastPlugins/releases/tag/1.0.0",
+      "files": {
+        "macos": [
+          {
+            "path": "plugins/podcast-plugins/1.0.0/macos/pp-master.vst3.zip",
+            "bundle": "pp-master.vst3",
+            "sha256": "6cf0cef6fc0b9eecb972882f81abfcfe01cf0bdcaf9d79a81c41a8bdd48e1880",
+            "size": 1790533
+          },
+          {
+            "path": "plugins/podcast-plugins/1.0.0/macos/pp-track.vst3.zip",
+            "bundle": "pp-track.vst3",
+            "sha256": "9e3af671ace672f9b128229592e48d92d41c1e348fe04890932e0f02491cf49f",
+            "size": 1832425
+          }
+        ],
+        "windows-x64": [
+          {
+            "path": "plugins/podcast-plugins/1.0.0/windows-x64/pp-master.vst3.zip",
+            "bundle": "pp-master.vst3",
+            "sha256": "8111c18695a017b568b14a25a39dd976a678a3179e1e4e290cf9446ac9088e34",
+            "size": 2410779
+          },
+          {
+            "path": "plugins/podcast-plugins/1.0.0/windows-x64/pp-track.vst3.zip",
+            "bundle": "pp-track.vst3",
+            "sha256": "f034b71ddbb1dc1ccda1397d715c600501e2831138f38a70fc40d6d4e5c50617",
+            "size": 2458070
+          }
+        ]
+      }
+    },
+    {
+      "id": "master_me",
+      "name": "master_me",
+      "version": "1.3.1",
+      "license": "GPL-3.0",
+      "license_file": "plugins/master_me/LICENSE",
+      "source": "https://github.com/trummerschlunk/master_me",
+      "release": "https://github.com/trummerschlunk/master_me/releases/tag/1.3.1",
+      "files": {
+        "macos": [
+          {
+            "path": "plugins/master_me/1.3.1/macos/master_me.vst3.zip",
+            "bundle": "master_me.vst3",
+            "sha256": "50660e9c6fa77d27b48199d17e9518f28d4ceb8ea309eea31f71f470690b6e1b",
+            "size": 2027789
+          }
+        ],
+        "windows-x64": [
+          {
+            "path": "plugins/master_me/1.3.1/windows-x64/master_me.vst3.zip",
+            "bundle": "master_me.vst3",
+            "sha256": "5900879336e01e63393626673c03e7f1ac92a6711641ce7069eeb98eca38989d",
+            "size": 2598606
+          }
+        ]
+      }
+    },
+    {
+      "id": "noise-repellent",
+      "name": "Noise Repellent",
+      "version": "0.4.1",
+      "license": "GPL-3.0",
+      "license_file": "plugins/noise-repellent/LICENSE",
+      "source": "https://github.com/lucianodato/noise-repellent",
+      "release": "https://github.com/lucianodato/noise-repellent/releases/tag/v0.4.1",
+      "files": {
+        "macos": [
+          {
+            "path": "plugins/noise-repellent/0.4.1/macos/Noise Repellent.vst3.zip",
+            "bundle": "Noise Repellent.vst3",
+            "sha256": "90d81ee23f7aae447aa0966b9e93356c2c81a3cfa1a8130022f23d816f6c7b64",
+            "size": 7040672
+          }
+        ],
+        "windows-x64": [
+          {
+            "path": "plugins/noise-repellent/0.4.1/windows-x64/Noise Repellent.vst3.zip",
+            "bundle": "Noise Repellent.vst3",
+            "sha256": "9b041009d8481759f6ff0f9f52488dae9a63a6ab5ccd397bb32ed2e939f47a2c",
+            "size": 2050032
+          }
+        ]
+      }
+    },
+    {
+      "id": "vocal-gate",
+      "name": "Vocal Gate",
+      "version": "1.0.5",
+      "license": "GPL-3.0",
+      "license_file": "plugins/vocal-gate/LICENSE",
+      "source": "https://github.com/dan-k-k/vocal-gate",
+      "release": "https://github.com/dan-k-k/vocal-gate/releases/tag/v1.0.5",
+      "files": {
+        "macos": [
+          {
+            "path": "plugins/vocal-gate/1.0.5/macos/Vocal Gate.vst3.zip",
+            "bundle": "Vocal Gate.vst3",
+            "sha256": "8c8eadc2ca5e3969fadfc393070802f187c1c92a22a6260230bb55baede4d591",
+            "size": 11293522
+          }
+        ],
+        "windows-x64": [
+          {
+            "path": "plugins/vocal-gate/1.0.5/windows-x64/VocalGate_Windows_Installer.exe",
+            "bundle": "Vocal Gate.vst3",
+            "sha256": "1126158ed3758842554dcfda295e1b3779b859387b8eeffad59ada632eabd76c",
+            "size": 31330154,
+            "installer": "inno",
+            "args": [
+              "/VERYSILENT",
+              "/SUPPRESSMSGBOXES",
+              "/NORESTART",
+              "/SP-"
+            ],
+            "installs_to": "common-vst3"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -33,7 +33,7 @@ Processes an audio or video file and prints the output path.
 | `--suffix` | `_improved` | added to the input name when `--output_path` is empty |
 | `--profile_name` | `dx35` | built-in plugin profile: `dx35`, `dx65`, `rx6-dx35`, `rx6` or `bypass` |
 | `--config_path` | empty | JSON file with custom chains; replaces the profile |
-| `--diarizer` | `mlx` | `mlx` or `sortformer` |
+| `--diarizer` | `mlx` | `none` for a uniform recording, `mlx` or `sortformer` for speaker detection |
 | `--diarization_json` | empty | speaker turns to use instead of a diarizer |
 | `--target_lufs` | `-16` | integrated loudness target, from -70 to -5 LUFS |
 | `--true_peak` | `-2` | true-peak ceiling, from -9 to 0 dBTP |
@@ -41,11 +41,13 @@ Processes an audio or video file and prints the output path.
 | `--start` | `0` | excerpt start, in seconds (audio input only) |
 | `--duration` | `0` | excerpt length, in seconds; `0` means to the end (audio input only) |
 | `--evaluate` | `True` | score matching before/after windows |
-| `--metrics_python` | empty | Python interpreter of the scoring environment |
+| `--metrics_python` | empty | optional interpreter with `vexy-speakup[models]` installed; default is the current one |
 | `--ai` | `none` | `none`, or `deepfilter` to run DeepFilterNet3 before the VSTs |
 | `--timeout` | `1800` | time limit, in seconds, for each external process |
 | `--force` | `False` | replace an existing output file |
 | `--verbose` | `False` | print each stage |
+| `--workers` | TOML default: `4` | isolated chunk worker limit, [1,128] |
+| `--brightness_db` | TOML default: `0` | 3 kHz speech shelf gain, [-12,12] dB |
 
 The command checks its arguments before it starts work:
 
@@ -99,7 +101,7 @@ vexy-speakup run meeting.mp4 \
   --work_dir=work --output_path=result.mp4 \
   --target_lufs=-16 --true_peak=-2 --verbose
 
-# Local DeepFilterNet3 CoreML pass before the VST chain
+# Local DeepFilterNet3 (MLX) pass before the VST chain
 vexy-speakup run meeting.m4a --ai=deepfilter
 
 # Reuse earlier or corrected speaker turns instead of running a diarizer
@@ -127,7 +129,7 @@ listening. It prints the path of `comparison.json`.
 | `--start` | `120` | excerpt start, in seconds |
 | `--duration` | `45` | excerpt length, in seconds |
 | `--profiles` | `dx35,dx65,rx6-dx35` | comma-separated profile names |
-| `--metrics_python` | empty | Python interpreter of the scoring environment |
+| `--metrics_python` | empty | optional interpreter with `vexy-speakup[models]` installed; default is the current one |
 | `--verbose` | `True` | print each stage |
 
 The command extracts the excerpt to `sample.wav`, diarizes it once with the
@@ -135,8 +137,7 @@ The command extracts the excerpt to `sample.wav`, diarizes it once with the
 those turns, writing `<profile>.wav` and a `<profile>/` work folder. Finally it
 collects every run's report into `comparison.json`.
 
-`attempts` always uses the `mlx` diarizer, so it needs
-`VEXY_SPEAKUP_TTS_ROOT`.
+`attempts` always uses the `mlx` diarizer, so it needs the `models` extra.
 
 ## `inspect`
 
@@ -200,7 +201,6 @@ Prints the installed package version.
 | Variable | Effect |
 | --- | --- |
 | `VEXY_SPEAKUP_PLUGIN_ROOT` | plugin folder for built-in profiles and `inventory` |
-| `VEXY_SPEAKUP_TTS_ROOT` | folder with the local model adapters |
 
-`run` also sets `HF_HUB_OFFLINE=1` for itself and its child processes, so model
-access never reaches the network.
+Model weights are cached in the standard Hugging Face cache (`HF_HOME` /
+`HF_HUB_CACHE`); see [Local models](local-models.md).

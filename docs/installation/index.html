@@ -30,7 +30,7 @@
           <link rel="icon" href="../assets/images/favicon.png">
         
       
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-materialx-10.2.0">
     
     
       
@@ -38,7 +38,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7aee198.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.a45159b5.min.css">
@@ -192,7 +192,7 @@
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0">
-        <div class="md-search-result" data-md-component="search-result">
+        <div class="md-search-result md-search-result--pagefind" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
@@ -403,10 +403,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#local-model-adapters" class="md-nav__link">
+  <a href="#local-models" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Local model adapters
+        Local models
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#free-plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Free plugins
       
     </span>
   </a>
@@ -509,6 +520,60 @@
   
   
     <li class="md-nav__item">
+      <a href="../batch/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Folder jobs and saved choices
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../listening/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Listen and choose in your browser
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
       <a href="../processing/" class="md-nav__link">
         
   
@@ -535,6 +600,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../processing-details/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Processing details and limits
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../outputs/" class="md-nav__link">
         
@@ -735,10 +827,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#local-model-adapters" class="md-nav__link">
+  <a href="#local-models" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Local model adapters
+        Local models
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#free-plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Free plugins
       
     </span>
   </a>
@@ -756,7 +859,9 @@
           
             <div class="md-content" data-md-component="content">
               
-              <article class="md-content__inner md-typeset">
+
+
+              <article class="md-content__inner md-typeset" data-pagefind-body>
                 
                   
   
@@ -841,16 +946,39 @@ another folder, set <code>VEXY_SPEAKUP_PLUGIN_ROOT</code>:</p>
 plugin, so it is a quick way to check the folder setting.</p>
 <p>The variable affects the built-in profiles and <code>inventory</code>. A custom chain file
 uses the full <code>path</code> written in each plugin entry.</p>
-<h2 id="local-model-adapters">Local model adapters<a class="headerlink" href="#local-model-adapters" title="Permanent link">&para;</a></h2>
-<p>Automatic diarization, the optional DeepFilterNet pass and quality scoring call
-local adapters that live outside this package. Point <code>VEXY_SPEAKUP_TTS_ROOT</code> at
-the folder that holds them:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">VEXY_SPEAKUP_TTS_ROOT</span><span class="o">=</span>/path/to/tts
+<h2 id="local-models">Local models<a class="headerlink" href="#local-models" title="Permanent link">&para;</a></h2>
+<p>Automatic diarization, the optional DeepFilterNet pass and quality scoring need
+the optional <code>models</code> extra (macOS Apple Silicon):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'vexy-speakup[models]'</span>
 </code></pre></div>
-<p><a href="../local-models/">Local models</a> lists what the folder must contain. You can
-process recordings without it by supplying speaker turns and turning scoring off:</p>
+<p>It adds <code>mlx-audio</code>, <code>huggingface-hub</code>, <code>onnxruntime</code>, <code>sentencepiece</code> and
+<code>speechonnxmetrics</code>. Weights download on first use into the Hugging Face cache.
+<a href="../local-models/">Local models</a> lists them. You can process recordings without
+the extra by supplying speaker turns and turning scoring off:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--diarization_json<span class="o">=</span>turns.json<span class="w"> </span>--evaluate<span class="o">=</span>False
 </code></pre></div>
+<h2 id="free-plugins">Free plugins<a class="headerlink" href="#free-plugins" title="Permanent link">&para;</a></h2>
+<p>Four GPL-3.0 plugins are available without installing them yourself:
+PodcastPlugins (TRACK, MASTER), master_me, Noise Repellent and Vocal Gate. They
+are stored with Git LFS in
+<a href="https://github.com/vexyart/vexy-speakup-assets">vexy-speakup-assets</a>, with
+builds for macOS and Windows x64. The package pins the
+repository commit and each file's SHA-256.</p>
+<p>When a chain names a plugin that is not in your VST3 folder, the bundled copy is
+downloaded on first use. To download everything up front, or to see what is
+installed:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>vexy-speakup<span class="w"> </span>assets<span class="w"> </span>fetch
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>vexy-speakup<span class="w"> </span>assets<span class="w"> </span>list
+</code></pre></div>
+<p>Bundles go to the user data folder (<code>~/Library/Application Support/vexy-speakup/plugins/</code>
+on macOS). Set <code>VEXY_SPEAKUP_ASSETS_DIR</code> to use another folder.</p>
+<p>On Windows, Vocal Gate exists only as its vendor installer. <code>assets fetch</code> (or
+the first chain that uses it) runs that installer silently. Windows asks for
+administrator rights; the plugin goes to
+<code>C:\Program Files\Common Files\VST3\Vocal Gate.vst3</code> together with the Visual C++
+runtime it needs. Remove it from Settings &gt; Apps. If you decline the prompt, the
+plugin is reported as not installed and the installer log is kept beside the
+other assets. <code>assets list</code> shows each plugin's install method.</p>
 
 
 
@@ -962,10 +1090,17 @@ process recordings without it by supplying speaker turns and turning scoring off
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+
+
+
+
+
+
+
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": {"options": {"baseUrl": "..", "bundleUrl": "../search/", "highlight": true, "searchOptions": {}}, "provider": "pagefind"}, "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.offline": "Switch to Lunr for offline search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      <script src="../assets/javascripts/bundle.44453a05.min.js"></script>
       
     
   </body>

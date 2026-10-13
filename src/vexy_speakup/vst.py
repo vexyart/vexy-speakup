@@ -7,51 +7,26 @@ import numpy as np
 import soundfile as sf
 from pedalboard import Pedalboard, load_plugin
 
-from .locations import plugin_root
+from .assets import bundled_plugin
+from .effects import load_builtin
 from .media import RATE, write_json
+from .profiles import plugin_spec, profile
 
-
-def plugin_spec(name: str, **parameters: object) -> dict:
-    return {"path": str(plugin_root() / name), "parameters": parameters}
-
-
-def profile(name: str) -> dict:
-    """Only use controls verified against these locally installed plugin versions."""
-    dx = plugin_spec("Accentize-dxRevivePro.vst3", mix=35.0, bypass=False)
-    rx = plugin_spec(
-        "RX 12 Voice De-noise.vst3",
-        reduction=6.0,
-        adaptive_mode=True,
-        global_bypass=False,
-    )
-    master = plugin_spec(
-        "Ozone 12 Maximizer.vst3",
-        max_output_level=-2.0,
-        max_input_gain_db=0.0,
-        max_upward_compression_amt_db=0.0,
-        max_soft_clip_on_off=False,
-        global_bypass=False,
-    )
-    choices = {
-        "dx35": [dx],
-        "dx65": [{**dx, "parameters": {"mix": 65.0, "bypass": False}}],
-        "rx6-dx35": [rx, dx],
-        "rx6": [rx],
-        "bypass": [],
-    }
-    if name not in choices:
-        raise ValueError(f"Unknown profile {name}; choose {', '.join(choices)}")
-    return {
-        "speech": choices[name],
-        "speakers": {},
-        "master": [] if name == "bypass" else [master],
-    }
+__all__ = ["load_chain", "plugin_spec", "profile", "render_chunk", "render_jobs", "render_master"]
 
 
 def load_chain(specs: list[dict]) -> tuple[Pedalboard, list[dict]]:
     plugins, receipts = [], []
     for spec in specs:
+        if spec["path"].startswith("builtin:"):
+            plugin, receipt = load_builtin(spec)
+            plugins.append(plugin)
+            receipts.append(receipt)
+            continue
         path = Path(spec["path"]).expanduser().resolve()
+        if not path.exists():
+            # Free plugins ship via vexy-speakup-assets when not installed locally.
+            path = bundled_plugin(path.name) or path
         plugin = load_plugin(
             str(path), plugin_name=spec.get("plugin_name"), initialization_timeout=15
         )
@@ -102,6 +77,8 @@ def render_jobs(jobs: list[dict], specs: list[dict], receipt: Path) -> None:
         x, rate = sf.read(job["input"], dtype="float32", always_2d=True)
         result = render_chunk(board, x, rate)
         sf.write(job["output"], result, rate, subtype="FLOAT")
+    for plugin, row in zip(board, plugins, strict=True):
+        row["reported_latency_samples"] = getattr(plugin, "reported_latency_samples", 0)
     write_json(receipt, {"plugins": plugins, "jobs": len(jobs)})
 
 
@@ -144,4 +121,6 @@ def render_master(source: Path, output: Path, specs: list[dict], receipt: Path) 
             written += min(len(y), frames - written)
         if written != frames:
             raise ValueError("Master tail drain did not preserve duration")
+    for plugin, row in zip(board, plugins, strict=True):
+        row["reported_latency_samples"] = getattr(plugin, "reported_latency_samples", 0)
     write_json(receipt, {"plugins": plugins, "frames": written})

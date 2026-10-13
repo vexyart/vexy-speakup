@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- this_file: src/vexy_speakup/web_assets/index.html -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Speakup · Listen and choose</title><link rel="stylesheet" href="/assets/style.css"></head>
+<body><main>
+<header><div><span class="eyebrow">VEXY SPEAKUP</span><h1>Listen. Choose. Process.</h1><p>Find the sound that suits your recordings.</p></div><button id="settings">Settings</button></header>
+<section aria-labelledby="folder-heading"><h2 id="folder-heading">1 · Choose your recordings</h2>
+<div class="field"><label for="folder">Audio or video folder</label><div class="inline"><input id="folder" placeholder="/path/to/recordings"><button data-browse="folder">Browse</button></div></div>
+<div class="options"><label><input type="checkbox" id="speaker">Choose separately for each speaker</label><label>Workers <input id="workers" type="number" min="1" max="128" value="4"></label></div>
+<div id="speaker-options" hidden><div class="options"><label>Speaker detection <select id="backend"><option>mlx</option><option>sortformer</option></select></label></div><label for="annotations">Existing speaker annotations folder (optional)</label><div class="inline"><input id="annotations"><button data-browse="annotations">Browse</button></div><p class="hint">Speaker numbers belong to each recording. Overlapping voices share a mixed clip.</p></div>
+<fieldset id="chain-list"><legend>Chains to compare</legend><p class="hint">Each chosen chain renders short clips in three tones. Greyed chains need plugins you do not have.</p><div id="chains-available"></div></fieldset>
+<button id="prepare" class="primary">Prepare listening clips</button>
+<details><summary>Open an earlier listening session</summary><div class="inline"><input id="manifest-path" aria-label="Listening session path" placeholder="Path to preview.json"><button id="load-preview">Open session</button></div></details>
+</section>
+<section id="listening" hidden aria-labelledby="listen-heading"><h2 id="listen-heading">2 · Listen and choose</h2><label for="group">Recording / speaker</label><select id="group"></select><p id="clip-detail" class="hint"></p><div class="original"><strong>Original · level matched</strong><audio id="original" controls preload="metadata"></audio></div><div id="chains"></div><p id="choice-detail" class="hint"></p>
+<div id="master-choice" hidden><label for="final-master">Final mastering (optional)</label><select id="final-master"></select><p class="hint">Applied once to the whole recording after the per-speaker chains. Clips above were levelled without it.</p></div>
+<label for="output">Output folder (optional)</label><div class="inline"><input id="output" placeholder="A speakup-output folder alongside your recordings"><button data-browse="output">Browse</button></div><button id="save" class="primary">Save batch job</button></section>
+<section aria-labelledby="job-heading"><h2 id="job-heading">3 · Process your recordings</h2><div class="inline"><input id="job-path" aria-label="Saved job path" placeholder="Path to a saved job.json"><button id="load-job">Open job</button></div><div class="options"><button id="run" class="primary" disabled>Run / resume job</button><label><input id="force" type="checkbox">Replace existing outputs</label></div><div id="job-summary"></div></section>
+<footer><p id="status" role="status">Choose a folder to begin.</p><button id="cancel" hidden>Stop processing</button><p id="error" role="alert"></p><small>Runs on your computer. Files stay local.</small></footer>
+</main>
+<dialog id="browser"><h2>Choose a folder</h2><div class="inline"><input id="browse-path" aria-label="Folder path"><button id="browse-go">Go</button></div><button id="browse-up">Parent folder</button><div id="folders"></div><div class="options"><button id="browse-select" class="primary">Use this folder</button><button id="browse-close">Cancel</button></div></dialog>
+<dialog id="settings-dialog"><h2>App settings</h2><label for="plugin-root">VST3 folder</label><div class="inline"><input id="plugin-root"><button data-browse="plugin-root">Browse</button></div><p id="settings-info" class="hint"></p><div class="options"><button id="settings-save" class="primary">Save settings</button><button id="settings-close">Cancel</button></div></dialog>
+<script type="module" src="/assets/app.js"></script></body></html>

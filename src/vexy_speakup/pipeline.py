@@ -4,6 +4,8 @@
 import math
 import sys
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
+from contextvars import copy_context
 from pathlib import Path
 
 import numpy as np
@@ -61,20 +63,47 @@ def prepare_jobs(
 
 
 def render_speakers(
-    groups: dict, work: Path, config: dict, timeout: int, verbose: bool
+    groups: dict,
+    work: Path,
+    config: dict,
+    timeout: int,
+    verbose: bool,
+    workers: int = 1,
 ) -> None:
-    """Crash and timeout isolation around each speaker's native plugin process."""
+    """Render independent chunk shards in bounded, isolated native processes."""
+    if type(workers) is not int or not 1 <= workers <= 128:
+        raise ValueError("workers must be an integer in [1,128]")
+    tasks = []
     for owner, jobs in groups.items():
         if verbose:
             print(f"Processing {owner}: {len(jobs)} fragments", flush=True)
         specs = config.get("speakers", {}).get(owner, config["speech"])
-        job_file = work / "speakers" / owner / "jobs.json"
-        write_json(job_file, {"jobs": jobs, "specs": specs})
-        command(
-            [*WORKER, "_render", f"--job_file={job_file}"],
-            timeout,
-            job_file.with_suffix(".log"),
-        )
+        for index in range(min(workers, len(jobs))):
+            directory = work / "speakers" / owner
+            if workers > 1:
+                directory /= f"worker-{index:03d}"
+            directory.mkdir(parents=True, exist_ok=True)
+            job_file = directory / "jobs.json"
+            write_json(job_file, {"jobs": jobs[index::workers], "specs": specs})
+            tasks.append(job_file)
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = [
+            pool.submit(
+                copy_context().run,
+                command,
+                [*WORKER, "_render", f"--job_file={path}"],
+                timeout,
+                path.with_suffix(".log"),
+            )
+            for path in tasks
+        ]
+        try:
+            for future in futures:
+                future.result()
+        except BaseException:
+            for future in futures:
+                future.cancel()
+            raise
 
 
 def collect_levels(jobs: list[dict], target: float) -> dict[str, float]:
@@ -102,8 +131,43 @@ def collect_levels(jobs: list[dict], target: float) -> dict[str, float]:
     return gains
 
 
+# Half-width of the crossfade at each fragment junction (40 ms in total).
+BLEND = 0.02
+
+
+def _signal(job: dict, reader: sf.SoundFile, a: int, b: int) -> np.ndarray:
+    """A job's audio at absolute frames [a, b): processed render with its gain, else original.
+
+    Renders carry half a second of context, so neighbours can be heard past the cut.
+    """
+    render = job.get("_render")
+    offset = job["crop_start"] + a - job["start_frame"]
+    if render is not None and offset >= 0 and offset + b - a <= len(render):
+        return render[offset : offset + b - a] * np.float32(10 ** (job["_gain"] / 20))
+    reader.seek(a)
+    return reader.read(b - a, dtype="float32", always_2d=True)
+
+
+def _blend(previous: dict, job: dict, reader: sf.SoundFile) -> None:
+    """Linear crossfade centred on the junction, using both jobs' own audio either side."""
+    a, b = previous["_body"], job["_body"]
+    half = min(round(BLEND * RATE), len(a) // 2, len(b) // 2)
+    if not half:
+        return
+    cut = job["start_frame"]
+    ramp = ((np.arange(2 * half) + 0.5) / (2 * half)).astype(np.float32)[:, None]
+    outgoing = np.concatenate([a[-half:], _signal(previous, reader, cut, cut + half)])
+    incoming = np.concatenate([_signal(job, reader, cut - half, cut), b[:half]])
+    mixed = outgoing * (1 - ramp) + incoming * ramp
+    a[-half:], b[:half] = mixed[:half], mixed[half:]
+
+
 def assemble(audio: Path, jobs: list[dict], work: Path, target: float) -> Path:
-    """Write each timeline sample once; shared overlaps stay a single mixed fragment."""
+    """Write each timeline sample once; adjacent fragments crossfade into each other.
+
+    Shared overlaps stay a single mixed fragment. A job is written only after its
+    successor has blended into its tail, so at most two fragments sit in memory.
+    """
     gains = collect_levels(jobs, target)
     output = work / "assembled.wav"
     with (
@@ -112,26 +176,32 @@ def assemble(audio: Path, jobs: list[dict], work: Path, target: float) -> Path:
             output, "w", samplerate=RATE, channels=2, subtype="FLOAT", format="RF64"
         ) as writer,
     ):
+
+        def flush(job: dict) -> None:
+            sf.write(job["fragment"], job["_body"], RATE, subtype="FLOAT")
+            writer.write(job["_body"])
+            for key in ("_body", "_render", "_gain"):
+                job.pop(key, None)
+
+        previous = None
         for job in jobs:
             n = job["end_frame"] - job["start_frame"]
-            reader.seek(job["start_frame"])
-            original = reader.read(n, dtype="float32", always_2d=True)
-            result = original.copy()
+            job["_gain"] = 0.0
             if job["speakers"]:
-                data, _ = sf.read(job["output"], dtype="float32", always_2d=True)
-                result = data[job["crop_start"] : job["crop_start"] + n].copy()
-                gain = level_gain(result, RATE, target, gains.get(job["owner"], 0))
-                result *= 10 ** (gain / 20)
-                job["gain_db"] = gain
-                fade = min(round(0.01 * RATE), n // 2)
-                if fade:
-                    ramp = np.linspace(0, 1, fade, dtype=np.float32)[:, None]
-                    result[:fade] = original[:fade] * (1 - ramp) + result[:fade] * ramp
-                    result[-fade:] = original[-fade:] * ramp + result[-fade:] * (
-                        1 - ramp
-                    )
-            sf.write(job["fragment"], result, RATE, subtype="FLOAT")
-            writer.write(result)
+                job["_render"], _ = sf.read(job["output"], dtype="float32", always_2d=True)
+                crop = job["_render"][job["crop_start"] : job["crop_start"] + n]
+                if len(crop) != n:
+                    raise ValueError(f"Render shorter than fragment {job['index']}")
+                job["_gain"] = job["gain_db"] = level_gain(
+                    crop, RATE, target, gains.get(job["owner"], 0)
+                )
+            job["_body"] = _signal(job, reader, job["start_frame"], job["end_frame"])
+            if previous is not None:
+                _blend(previous, job, reader)
+                flush(previous)
+            previous = job
+        if previous is not None:
+            flush(previous)
         if writer.tell() != len(reader):
             raise ValueError("Assembly changed timeline length")
     write_json(work / "fragments.json", jobs)

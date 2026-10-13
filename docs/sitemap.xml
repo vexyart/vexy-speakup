@@ -6,6 +6,11 @@
         <changefreq>daily</changefreq>
     </url>
     <url>
+        <loc>https://vexy.dev/vexy-speakup/batch/</loc>
+        <lastmod>2026-10-13</lastmod>
+        <changefreq>daily</changefreq>
+    </url>
+    <url>
         <loc>https://vexy.dev/vexy-speakup/changelog/</loc>
         <lastmod>2026-10-13</lastmod>
         <changefreq>daily</changefreq>
@@ -31,12 +36,22 @@
         <changefreq>daily</changefreq>
     </url>
     <url>
+        <loc>https://vexy.dev/vexy-speakup/listening/</loc>
+        <lastmod>2026-10-13</lastmod>
+        <changefreq>daily</changefreq>
+    </url>
+    <url>
         <loc>https://vexy.dev/vexy-speakup/local-models/</loc>
         <lastmod>2026-10-13</lastmod>
         <changefreq>daily</changefreq>
     </url>
     <url>
         <loc>https://vexy.dev/vexy-speakup/outputs/</loc>
+        <lastmod>2026-10-13</lastmod>
+        <changefreq>daily</changefreq>
+    </url>
+    <url>
+        <loc>https://vexy.dev/vexy-speakup/processing-details/</loc>
         <lastmod>2026-10-13</lastmod>
         <changefreq>daily</changefreq>
     </url>

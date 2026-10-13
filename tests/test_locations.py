@@ -1,17 +1,15 @@
 # this_file: tests/test_locations.py
 """Installation roots resolve lazily and fail with setup guidance."""
 
+import json
+import sys
+from pathlib import Path
+
 import pytest
 
-from vexy_speakup import __version__
+from vexy_speakup import __version__, models
 from vexy_speakup.cli import version
-from vexy_speakup.locations import (
-    DEFAULT_PLUGIN_ROOT,
-    PLUGIN_ENV,
-    TTS_ENV,
-    plugin_root,
-    tts_root,
-)
+from vexy_speakup.locations import DEFAULT_PLUGIN_ROOT, PLUGIN_ENV, plugin_root
 from vexy_speakup.models import diarize, score
 from vexy_speakup.vst import profile
 
@@ -33,24 +31,37 @@ def test_profile_when_plugin_root_set_then_paths_follow_it(monkeypatch, tmp_path
         profile("unknown")
 
 
-def test_tts_root_when_unset_or_missing_then_actionable_error(monkeypatch, tmp_path):
-    monkeypatch.delenv(TTS_ENV, raising=False)
-    with pytest.raises(FileNotFoundError, match=TTS_ENV):
-        tts_root()
-    monkeypatch.setenv(TTS_ENV, str(tmp_path / "absent"))
-    with pytest.raises(FileNotFoundError, match="not a directory"):
-        tts_root()
-    monkeypatch.setenv(TTS_ENV, str(tmp_path))
-    assert tts_root() == tmp_path
-
-
-def test_model_adapters_when_tts_root_unset_then_fail_as_oserror(monkeypatch, tmp_path):
-    monkeypatch.delenv(TTS_ENV, raising=False)
+def test_model_adapters_when_extra_missing_then_install_hint(monkeypatch, tmp_path):
+    monkeypatch.setattr(models.importlib.util, "find_spec", lambda name: None)
     audio = tmp_path / "a.wav"
-    with pytest.raises(OSError):
+    with pytest.raises(ModuleNotFoundError, match=r"vexy-speakup\[models\]"):
         diarize(audio, tmp_path, "mlx", "", 1, 10)
-    with pytest.raises(OSError):
+    with pytest.raises(ModuleNotFoundError, match="models"):
         score(audio, tmp_path)
+
+
+def test_diarize_when_mlx_then_runs_bundled_worker(monkeypatch, tmp_path):
+    calls = []
+
+    def fake(args, timeout, log):
+        calls.append(args)
+        output = next(a for a in args if a.startswith("--output="))[9:]
+        segments = [{"start": 0, "end": 1.05, "speaker": 0}]
+        Path(output).write_text(json.dumps({"segments": segments}))
+        return ""
+
+    monkeypatch.setattr(models, "worker", lambda python="": [sys.executable, "-m", "w"])
+    monkeypatch.setattr(models, "command", fake)
+    turns = diarize(tmp_path / "a.wav", tmp_path, "mlx", "", 1.05, 10)
+    assert turns == [{"start": 0.0, "end": 1.05, "speaker": "0"}], "Parsed worker turns"
+    assert "--backend=mlx" in calls[0] and "diarize" in calls[0]
+
+
+def test_clip_eof_when_last_frame_overruns_then_clipped():
+    from vexy_speakup.model_worker import clip_eof
+
+    rows = clip_eof([{"start": 0, "end": 10.05, "speaker": 0}], 10.0)
+    assert rows[0]["end"] == 10.0 and rows[0]["end_before_eof_clip"] == 10.05
 
 
 def test_diarize_when_backend_unknown_then_value_error(tmp_path):

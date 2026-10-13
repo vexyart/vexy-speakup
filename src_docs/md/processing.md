@@ -61,9 +61,11 @@ plugins a run-up and is removed again later.
 
 ## 5. Render each speaker
 
-Each owner with speech (`A`, `B` and `_overlap`) gets one worker process that
-loads its chain once: the owner's chain from `speakers` in a custom chain file,
-or the shared `speech` chain. Background intervals are not rendered.
+Each owner with speech (`A`, `B` and `_overlap`) has its chunks distributed to
+isolated workers, up to the configured worker budget. Each worker loads its
+chain once: the owner's chain from `speakers` in a custom chain file, or the
+shared `speech` chain. Background intervals are not rendered. Whole-recording
+mode (`--diarizer=none`) explicitly uses one uniform chain over the full signal.
 
 For each fragment, the worker:
 
@@ -99,9 +101,11 @@ The gains are saved in `speaker-gains.json` and per fragment in
 ## 7. Assemble
 
 The fragments are written in timeline order to `assembled.wav`. The context
-margins are cropped away, and each processed fragment is blended with the
-original over 10 ms at both ends to avoid clicks. Background intervals are copied
-from the source unchanged. If the assembled file has a different number of
+margins are cropped away. Neighbouring fragments crossfade into each other over
+40 ms centred on each cut, using both fragments' own audio (renders keep half a
+second of context), so two speakers' chains meet directly rather than through
+unprocessed audio. Background intervals are copied from the source and crossfade
+the same way. The first and last samples are never faded. If the assembled file has a different number of
 samples from the input, the run stops.
 
 ## 8. Master

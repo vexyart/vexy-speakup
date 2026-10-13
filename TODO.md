@@ -4,3 +4,15 @@
 - [x] hatch-vcs versioning from git tags; ignore the generated `__version__.py`.
 - [x] Build, twine-check and clean-install wheel/sdist; inspect contents.
 - [ ] Tag `v0.1.0` and publish after explicit approval.
+- [x] Issue 101: finish legacy source audit and retire duplicate scripts.
+- [x] Fix Pluginary scan failures, rescan installed plugins and capture results.
+- [x] Extend Pluginary metadata and record deep research with primary sources.
+- [x] Add TOML app settings, OS config path and candidate chain definitions.
+- [x] Add bounded concurrent chunk workers with per-speaker overrides.
+- [x] Implement four useful preview chains, open-source integration and brightness.
+- [x] Add persisted batch jobs, folder CLI and variant output suffixes.
+- [x] Add local browser UI with folder selection, previews and job scheduling.
+- [x] Add speaker preview choices and apply them across every batch file.
+- [x] Integrate diarization contracts with vexy-subs as needed.
+- [x] Verify real recordings, commercial/open-source plugins and GUI workflows.
+- [x] Complete documentation, package checks, cleanup and direct code review.

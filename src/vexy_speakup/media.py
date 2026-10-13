@@ -5,21 +5,17 @@ import hashlib
 import json
 import math
 import os
-import subprocess
 from pathlib import Path
+
+from .cancel import check
+from .process import capture
 
 RATE = 48000
 
 
 def command(args: list[str], timeout: int = 1800, log: Path | None = None) -> str:
     """Run an argv command with a deadline and retain failures for diagnosis."""
-    result = subprocess.run(
-        list(map(str, args)),
-        capture_output=True,
-        text=True,
-        timeout=timeout,
-        check=False,
-    )
+    result = capture(list(map(str, args)), timeout)
     if log:
         log.write_text(result.stdout + result.stderr)
     if result.returncode:
@@ -31,7 +27,11 @@ def command(args: list[str], timeout: int = 1800, log: Path | None = None) -> st
 
 def sha(path: Path) -> str:
     with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+        digest = hashlib.sha256()
+        while block := stream.read(1024 * 1024):
+            check()
+            digest.update(block)
+        return digest.hexdigest()
 
 
 def write_json(path: Path, value: object) -> None:

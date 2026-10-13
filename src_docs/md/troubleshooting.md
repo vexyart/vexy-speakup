@@ -24,15 +24,25 @@ first, or process its audio:
 vexy-speakup run meeting.mp4 --output_path=speech.wav --start=120 --duration=45
 ```
 
-## `Set VEXY_SPEAKUP_TTS_ROOT ...`
+## `No module named mlx_audio` or `... is not installed`
 
-A diarizer, DeepFilterNet or scoring needs the local adapters and the variable is
-not set, or does not point to a folder. Set it as described in
-[Local models](local-models.md), or run without the adapters:
+A diarizer, DeepFilterNet or scoring needs the `models` extra, which is not
+installed in this environment. Install it (macOS Apple Silicon):
+
+```bash
+uv pip install 'vexy-speakup[models]'
+```
+
+Or run without local models:
 
 ```bash
 vexy-speakup run meeting.m4a --diarization_json=turns.json --evaluate=False
 ```
+
+The first run of each model downloads its weights from Hugging Face and needs
+network access. Afterwards runs work with `HF_HUB_OFFLINE=1`. If a model step
+fails, read its log in the run folder: `diarization.log`, `metrics.log` or
+`deepfilter.log`.
 
 ## `diarizer must be mlx or sortformer, or supply --diarization_json`
 

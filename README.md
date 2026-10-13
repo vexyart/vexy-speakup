@@ -16,8 +16,71 @@ vexy-speakup run meeting.mp4 --profile_name=dx65 --verbose
 It requires macOS, Python 3.12+ and FFmpeg/ffprobe on PATH. Rendering uses the
 tested Pedalboard 0.9.26 wheel. The built-in profiles expect Accentize dxRevive
 Pro, iZotope RX 12 Voice De-noise and Ozone 12 Maximizer. Plugins are read from
-`/Library/Audio/Plug-Ins/VST3`. Set `VEXY_SPEAKUP_PLUGIN_ROOT` to use another
-folder. Plugins and their licences are yours; none are distributed here.
+`/Library/Audio/Plug-Ins/VST3`. Set the folder in the TOML app settings or use
+`VEXY_SPEAKUP_PLUGIN_ROOT`. Plugins and their licences are yours; none are
+distributed here.
+
+## App settings
+
+```bash
+vexy-speakup config path       # OS config folder, located with platformdirs
+vexy-speakup config init       # creates config.toml; refuses to overwrite
+vexy-speakup config show       # effective settings with defaults
+vexy-speakup run meeting.mp4 --workers=8 --max_chunk=15
+```
+
+On macOS the file is `~/Library/Application Support/vexy-speakup/config.toml`.
+`VEXY_SPEAKUP_CONFIG` selects another app settings file. `[paths]` configures
+`plugin_root`; the environment variable takes precedence. An old `tts_root` key
+is ignored. `[processing]` configures `profile`, `workers`, `max_chunk`,
+`target_lufs` and `true_peak`. Explicit `run` options override these. Unknown
+settings and invalid ranges fail before processing.
+`brightness_db` adds a 3 kHz high shelf to shared/per-speaker speech chains
+(range -12 to +12 dB); zero is neutral. Set it in TOML or pass
+`--brightness_db=3`. The master remains continuous after assembly.
+
+`[candidates.NAME]` defines a `profile` alias and a distinct `suffix`, or
+explicit `speech`, `master` and optional `speakers` chains. Relative plugin
+paths in TOML candidates resolve under `plugin_root`. Use the candidate's name
+with `--profile_name=NAME`. See [example TOML](examples/config.example.toml).
+The existing `--config_path` option still accepts a JSON chain for one run.
+
+## Folder jobs
+
+For browser listening, install `uv tool install '.[gui]'` from this checkout,
+then run `vexy-speakup gui recordings`, or use `./run-gui.sh recordings` from
+the checkout. It opens `http://127.0.0.1:8765` with
+folder selection, level-matched previews, brightness and per-speaker choices,
+saved jobs and stop/resume controls. Audio stays local. See the
+[listening workflow](src_docs/md/listening.md).
+
+```bash
+# All configured candidate chains; global processing needs no diarization model
+vexy-speakup batch recordings --workers=8 --file_workers=2
+
+# Schedule now, run later (prints the saved job path)
+vexy-speakup schedule recordings --candidates=podcast,dx35-bright
+vexy-speakup job /path/to/job.json --workers=8
+
+# Optional individual speaker preparation; needs the models extra
+vexy-speakup batch recordings --diarizer=mlx
+```
+
+Jobs default to the platformdirs data folder under `jobs/`; select a file with
+`--job_path`. Outputs default to `recordings/speakup-output/`, retaining input
+extensions with each candidate's suffix. `--recursive=True` retains subfolders.
+The total worker budget is split across `file_workers`; decoding and diarization
+are shared across variants of one recording. MOS evaluation defaults off for
+batch speed. `--diarizer=none` means one uniform chain over the whole recording;
+individual speaker mode requires actual diarization or supplied annotations.
+
+Each job snapshots source hashes, chains and optional per-file speaker choices.
+Resume verifies completed outputs, reports and settings before skipping work,
+and recovers a completed render after an interrupted state update. Changed
+inputs/outputs fail explicitly. Use `job --force=True` to replace outputs when
+retrying. Failures persist per task and make the CLI exit with status 1.
+`--diarization_dir` accepts matching relative `.json` annotation files, whose
+contents are saved in the job. Speaker IDs are scoped to each input file.
 
 ## Commands
 
@@ -39,7 +102,7 @@ vexy-speakup run meeting.m4a --start=120 --duration=45
 # Export audio only from a video
 vexy-speakup run meeting.mp4 --output_path=speech.wav
 
-# Optional local DeepFilterNet3 CoreML before VST processing
+# Optional local DeepFilterNet3 (MLX) before VST processing
 vexy-speakup run meeting.m4a --ai=deepfilter
 
 # Reuse or correct speaker annotations instead of rerunning a model
@@ -63,21 +126,21 @@ work folder, so previous attempts and originals stay available.
 
 ## Local models
 
-Diarization, DeepFilterNet and quality scoring call existing local adapters and
-native hosts in isolated uv environments. Set `VEXY_SPEAKUP_TTS_ROOT` to the
-folder holding `myasr/`, `myaud/` and `.external/`. Without it, you can still
-process a recording with `--diarization_json=turns.json --evaluate=False`.
+Diarization, DeepFilterNet and scoring need the `models` extra (Apple Silicon):
+`uv pip install 'vexy-speakup[models]'`. Pinned weights download on first use into
+the Hugging Face cache, then work offline: `mlx-community/Nemotron-3-Diarization-8bit`
+(default), `mlx-community/diar_streaming_sortformer_4spk-v2.1-fp16` (`sortformer`),
+`iky1e/DeepFilterNet3-MLX` (`--ai=deepfilter`). Without the extra, use
+`--diarizer=none` or `--diarization_json=turns.json --evaluate=False`. Evaluation
+scores three 30-second windows with DNSMOS and UTMOS; failures are report errors,
+never synthetic scores.
 
-The default diarizer is the cached `mlx-community/Nemotron-3-Diarization-8bit`
-conversion via `myasr/tools/diarize-mlx.py`. Sortformer uses the pinned Q8 GGUF
-from the Hugging Face cache and the native `nemo-speech` host. No paid service is
-used, and model access runs with `HF_HUB_OFFLINE=1`.
+## Free plugins
 
-Evaluation invokes the cached `aud-metrics` environment and its DNSMOS/UTMOS
-ONNX predictors. Override its Python with `--metrics_python=...` or disable
-scoring with `--evaluate=False`. Missing predictors appear as errors in reports;
-they never become synthetic scores. Normal runs score up to three matching
-30-second speech windows.
+PodcastPlugins, master_me, Noise Repellent and Vocal Gate (GPL-3.0, macOS and
+Windows x64) ship from [vexy-speakup-assets](https://github.com/vexyart/vexy-speakup-assets),
+pinned by commit and SHA-256. A chain plugin missing from `plugin_root` is fetched
+on first use; `vexy-speakup assets fetch` downloads all, `assets list` shows them.
 
 ## Profiles and custom chains
 
@@ -85,6 +148,13 @@ they never become synthetic scores. Normal runs score up to three matching
 `dx65` raises restoration to 65%; it led DNSMOS on the tested Zoom excerpt.
 `rx6-dx35` adds RX Voice De-noise at 6 dB before dxRevive.
 `rx6` uses RX alone. `bypass` skips VSTs but keeps the level passes.
+`podcast` uses the GPL PodcastPlugins TRACK and MASTER (`pp-track.vst3` and
+`pp-master.vst3`); `podcast-bright` raises TRACK's TIMBRE to +2. `clear` uses
+Supertone Clear for voice/ambience/reverb balance before Ozone mastering.
+`dx35-bright` adds a 3 dB high shelf to dx35. The four default candidates are
+`podcast`, `dx35`, `dx35-bright` and `clear`. Missing plugins produce errors.
+All controls were checked against installed versions; choices still need
+listening comparisons for your speakers.
 
 Use `--config_path=custom-chain.json` to replace the chains. The bundled
 [example](examples/custom-chain.example.json) gives speaker `0` a lighter
@@ -94,54 +164,17 @@ assembly. Each plugin entry accepts `path`, `parameters`, optional `plugin_name`
 for a multi-plugin bundle, and optional `preset` for a saved `.vstpreset` file.
 Parameter names are validated against the installed plugin; unknown names fail.
 Saved presets should come from your own host and installed plugin version.
+Use `path = "builtin:high-shelf"` for Pedalboard's open-source shelf, with
+`cutoff_frequency_hz`, `gain_db` and `q` parameters, in TOML or JSON speech chains.
 
 ## Processing and files
 
-1. FFmpeg extracts stereo float PCM at 48 kHz. A delayed video audio start
-   becomes leading silence. Diarization receives the original signal; optional
-   AI restoration happens afterwards.
-2. The diarizer processes the complete audio with its own bounded context, so
-   speaker IDs are not restarted for each fragment.
-3. The timeline is partitioned into disjoint speech, overlap and background
-   intervals of at most 30 seconds (`--max_chunk`). Each speech fragment
-   carries half a second of context at each edge.
-4. One isolated plugin worker (`python -m vexy_speakup _render`) processes each
-   speaker and resets the chain between fragments. Stereo is retained. Two
-   seconds of padding drain plugin buffering; Pedalboard compensates reported
-   plugin latency.
-5. A duration-weighted median calibrates each speaker. Turn adjustments stay
-   within 3 dB of that baseline, and total gain within ±12 dB. Silence is never
-   amplified. Processing transitions blend with the source over 10 ms.
-6. Timeline assembly writes every sample exactly once. Background gaps remain.
-   Overlap is processed once as a mixed fragment under `speakers/_overlap`.
-7. Two-pass R128 levelling precedes continuous mastering; a measured pass then
-   sets final loudness and true peak. Export checks the encoded true peak and
-   attenuates and re-encodes if lossy encoding overshoots.
-8. For video, FFmpeg copies the original video packets and replaces the audio.
-
-`speakers/<ID>/*.wav` are levelled timeline fragments; `*-context.wav` and
-`*-render.wav` keep their processing context. `*-mastered.wav` are 24-bit cuts
-from the final master, with final levels and the full-recording limiter
-behaviour. `fragments.json` records original times, sample offsets, active
-speakers and gains. Intermediate WAVs are float PCM and may exceed 0 dBFS;
-`master.wav` and the published output are the peak-controlled deliverables.
-A long recording can consume tens of GB of work files.
-
-`turns.json`, diarization receipts, `speaker-gains.json`, VST parameter
-receipts, `report.json`, `evaluation.json`, subprocess logs and `latest.json`
-make each run reviewable. A failed run records its error and keeps its work
-files. A successful output is published through a temporary file and rename.
-
-## Limits
-
-Predictor scores guide comparisons. They do not establish speaker accuracy,
-transcript preservation or perceptual quality across a whole meeting. Diarized
-fragments are not isolated voices during simultaneous speech; that would need
-separate microphone tracks or a tested separation model. Speaker IDs are
-anonymous until you label them.
-
-Recordings, turn files and run folders are your private data. They are excluded
-from the source and wheel allowlists, and nothing is uploaded.
+The pipeline preserves the original timeline, processes overlaps as mixed
+fragments, levels individual voices and masters the assembled recording
+continuously. Video packets are copied. Receipts, source hashes and intermediate
+files remain in each run folder; original recordings are never overwritten.
+See [processing details and limits](src_docs/md/processing-details.md) for
+chunk context, gains, file outputs, disk use and model-score limitations.
 
 ## Development
 

@@ -30,7 +30,7 @@
           <link rel="icon" href="../assets/images/favicon.png">
         
       
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-materialx-10.2.0">
     
     
       
@@ -38,7 +38,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7aee198.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.a45159b5.min.css">
@@ -192,7 +192,7 @@
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0">
-        <div class="md-search-result" data-md-component="search-result">
+        <div class="md-search-result md-search-result--pagefind" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
@@ -407,6 +407,60 @@
   
   
     <li class="md-nav__item">
+      <a href="../batch/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Folder jobs and saved choices
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../listening/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Listen and choose in your browser
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
       <a href="../processing/" class="md-nav__link">
         
   
@@ -433,6 +487,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../processing-details/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Processing details and limits
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../outputs/" class="md-nav__link">
         
@@ -581,10 +662,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#set-vexy_speakup_tts_root" class="md-nav__link">
+  <a href="#no-module-named-mlx_audio-or-is-not-installed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Set VEXY_SPEAKUP_TTS_ROOT ...
+        No module named mlx_audio or ... is not installed
       
     </span>
   </a>
@@ -823,10 +904,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#set-vexy_speakup_tts_root" class="md-nav__link">
+  <a href="#no-module-named-mlx_audio-or-is-not-installed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Set VEXY_SPEAKUP_TTS_ROOT ...
+        No module named mlx_audio or ... is not installed
       
     </span>
   </a>
@@ -954,7 +1035,9 @@
           
             <div class="md-content" data-md-component="content">
               
-              <article class="md-content__inner md-typeset">
+
+
+              <article class="md-content__inner md-typeset" data-pagefind-body>
                 
                   
   
@@ -977,12 +1060,18 @@ Choose a different <code>--work_dir</code> or <code>--output_path</code>.</p>
 first, or process its audio:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.mp4<span class="w"> </span>--output_path<span class="o">=</span>speech.wav<span class="w"> </span>--start<span class="o">=</span><span class="m">120</span><span class="w"> </span>--duration<span class="o">=</span><span class="m">45</span>
 </code></pre></div>
-<h2 id="set-vexy_speakup_tts_root"><code>Set VEXY_SPEAKUP_TTS_ROOT ...</code><a class="headerlink" href="#set-vexy_speakup_tts_root" title="Permanent link">&para;</a></h2>
-<p>A diarizer, DeepFilterNet or scoring needs the local adapters and the variable is
-not set, or does not point to a folder. Set it as described in
-<a href="../local-models/">Local models</a>, or run without the adapters:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--diarization_json<span class="o">=</span>turns.json<span class="w"> </span>--evaluate<span class="o">=</span>False
+<h2 id="no-module-named-mlx_audio-or-is-not-installed"><code>No module named mlx_audio</code> or <code>... is not installed</code><a class="headerlink" href="#no-module-named-mlx_audio-or-is-not-installed" title="Permanent link">&para;</a></h2>
+<p>A diarizer, DeepFilterNet or scoring needs the <code>models</code> extra, which is not
+installed in this environment. Install it (macOS Apple Silicon):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'vexy-speakup[models]'</span>
 </code></pre></div>
+<p>Or run without local models:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--diarization_json<span class="o">=</span>turns.json<span class="w"> </span>--evaluate<span class="o">=</span>False
+</code></pre></div>
+<p>The first run of each model downloads its weights from Hugging Face and needs
+network access. Afterwards runs work with <code>HF_HUB_OFFLINE=1</code>. If a model step
+fails, read its log in the run folder: <code>diarization.log</code>, <code>metrics.log</code> or
+<code>deepfilter.log</code>.</p>
 <h2 id="diarizer-must-be-mlx-or-sortformer-or-supply-diarization_json"><code>diarizer must be mlx or sortformer, or supply --diarization_json</code><a class="headerlink" href="#diarizer-must-be-mlx-or-sortformer-or-supply-diarization_json" title="Permanent link">&para;</a></h2>
 <p><code>--diarizer</code> has an unsupported value. Use <code>mlx</code>, <code>sortformer</code>, or supply turns.</p>
 <h2 id="errors-about-turns">Errors about turns<a class="headerlink" href="#errors-about-turns" title="Permanent link">&para;</a></h2>
@@ -1015,7 +1104,7 @@ not set, or does not point to a folder. Set it as described in
 <h2 id="unknown-parameter-use-inspect"><code>Unknown parameter ... use inspect</code><a class="headerlink" href="#unknown-parameter-use-inspect" title="Permanent link">&para;</a></h2>
 <p>A chain sets a parameter that the loaded plugin does not have. Names depend on
 the plugin and its version. Print the real names:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>vexy-speakup<span class="w"> </span>inspect<span class="w"> </span><span class="s2">"/Library/Audio/Plug-Ins/VST3/Ozone 12 Maximizer.vst3"</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>vexy-speakup<span class="w"> </span>inspect<span class="w"> </span><span class="s2">"/Library/Audio/Plug-Ins/VST3/Ozone 12 Maximizer.vst3"</span>
 </code></pre></div>
 <p>Then correct the chain file.</p>
 <h2 id="unknown-profile"><code>Unknown profile ...</code><a class="headerlink" href="#unknown-profile" title="Permanent link">&para;</a></h2>
@@ -1156,10 +1245,17 @@ most recent successful run.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+
+
+
+
+
+
+
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": {"options": {"baseUrl": "..", "bundleUrl": "../search/", "highlight": true, "searchOptions": {}}, "provider": "pagefind"}, "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.offline": "Switch to Lunr for offline search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      <script src="../assets/javascripts/bundle.44453a05.min.js"></script>
       
     
   </body>

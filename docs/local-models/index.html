@@ -30,7 +30,7 @@
           <link rel="icon" href="../assets/images/favicon.png">
         
       
-      <meta name="generator" content="mkdocs-ProperDocs 1.6.7, mkdocs-materialx-10.1.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-materialx-10.2.0">
     
     
       
@@ -38,7 +38,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.314bbef5.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.d7aee198.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.a45159b5.min.css">
@@ -192,7 +192,7 @@
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" tabindex="0">
-        <div class="md-search-result" data-md-component="search-result">
+        <div class="md-search-result md-search-result--pagefind" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
           </div>
@@ -407,6 +407,60 @@
   
   
     <li class="md-nav__item">
+      <a href="../batch/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Folder jobs and saved choices
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
+      <a href="../listening/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Listen and choose in your browser
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
+    <li class="md-nav__item">
       <a href="../processing/" class="md-nav__link">
         
   
@@ -433,6 +487,33 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../processing-details/" class="md-nav__link">
+
+
+
+  <span class="md-ellipsis">
+
+
+    Processing details and limits
+
+
+
+  </span>
+
+
+
+      </a>
+    </li>
+
+
+
+
+
+
+
+
+
     <li class="md-nav__item">
       <a href="../outputs/" class="md-nav__link">
         
@@ -521,10 +602,21 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
-  <a href="#the-adapter-folder" class="md-nav__link">
+  <a href="#install-the-extra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The adapter folder
+        Install the extra
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#weights" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Weights
       
     </span>
   </a>
@@ -604,10 +696,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#working-without-the-adapters" class="md-nav__link">
+  <a href="#working-without-the-extra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Working without the adapters
+        Working without the extra
       
     </span>
   </a>
@@ -730,10 +822,21 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
-  <a href="#the-adapter-folder" class="md-nav__link">
+  <a href="#install-the-extra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        The adapter folder
+        Install the extra
+
+    </span>
+  </a>
+
+</li>
+
+        <li class="md-nav__item">
+  <a href="#weights" class="md-nav__link">
+    <span class="md-ellipsis">
+
+        Weights
       
     </span>
   </a>
@@ -813,10 +916,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#working-without-the-adapters" class="md-nav__link">
+  <a href="#working-without-the-extra" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Working without the adapters
+        Working without the extra
       
     </span>
   </a>
@@ -834,7 +937,9 @@
           
             <div class="md-content" data-md-component="content">
               
-              <article class="md-content__inner md-typeset">
+
+
+              <article class="md-content__inner md-typeset" data-pagefind-body>
                 
                   
   
@@ -842,59 +947,65 @@
 
 
 <h1 id="local-models">Local models<a class="headerlink" href="#local-models" title="Permanent link">&para;</a></h1>
-<p>Diarization, DeepFilterNet restoration and quality scoring are not Python
-dependencies of <code>vexy-speakup</code>. They call local adapters and native hosts that
-run in their own uv environments. All model access runs offline, with
-<code>HF_HUB_OFFLINE=1</code>, and no paid service is used.</p>
-<h2 id="the-adapter-folder">The adapter folder<a class="headerlink" href="#the-adapter-folder" title="Permanent link">&para;</a></h2>
-<p>Set <code>VEXY_SPEAKUP_TTS_ROOT</code> to the folder that holds <code>myasr/</code>, <code>myaud/</code> and
-<code>.external/</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">VEXY_SPEAKUP_TTS_ROOT</span><span class="o">=</span>/path/to/tts
+<p>Diarization, DeepFilterNet restoration and quality scoring run local models. The
+code ships inside <code>vexy-speakup</code> as <code>vexy_speakup.model_worker</code>; the model
+libraries come from the optional <code>models</code> extra (macOS, Apple Silicon). No paid
+service is used and no external adapter folder is needed.</p>
+<h2 id="install-the-extra">Install the extra<a class="headerlink" href="#install-the-extra" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'vexy-speakup[models]'</span>
 </code></pre></div>
-<p>The folder is only looked up when a feature needs it. If it is unset or is not a
-folder, that feature stops with an error that names the variable.</p>
+<p>The extra installs <code>mlx-audio==0.5.7</code>, <code>huggingface-hub</code>, <code>onnxruntime</code>,
+<code>sentencepiece</code> and <code>speechonnxmetrics[audio]==0.0.2a3</code>. If it is missing, the
+feature stops with <code>ModuleNotFoundError</code> naming this command; evaluation records
+the error per window instead of failing the run.</p>
+<p>Each model step runs as a child process, <code>python -m vexy_speakup.model_worker
+diarize|score|deepfilter</code>, so cancellation and <code>--timeout</code> still kill it. Its log
+is written to the run folder: <code>diarization.log</code>, <code>metrics.log</code> or
+<code>deepfilter.log</code>.</p>
+<h2 id="weights">Weights<a class="headerlink" href="#weights" title="Permanent link">&para;</a></h2>
+<p>All weights download on first use into the standard Hugging Face cache
+(<code>HF_HOME</code> / <code>HF_HUB_CACHE</code>, default <code>~/.cache/huggingface/hub</code>) and are pinned
+by commit. The first use needs network access; afterwards runs work with
+<code>HF_HUB_OFFLINE=1</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Feature</th>
-<th>Files used under <code>VEXY_SPEAKUP_TTS_ROOT</code></th>
+<th>Hugging Face repository @ revision</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>mlx</code> diarizer</td>
-<td><code>myasr/tools/diarize-mlx.py</code></td>
+<td><code>mlx</code> diarizer (default)</td>
+<td><code>mlx-community/Nemotron-3-Diarization-8bit</code> @ <code>dd8b8ce3d69a80540a7e50150e2beed1c34fee37</code></td>
 </tr>
 <tr>
 <td><code>sortformer</code> diarizer</td>
-<td><code>.external/NeMo-Speech.cpp/build/metal-asr/bin/nemo-speech</code></td>
+<td><code>mlx-community/diar_streaming_sortformer_4spk-v2.1-fp16</code> @ <code>e23e6404bd9859e93edbf94a740eb1c7fc58f12e</code></td>
 </tr>
 <tr>
 <td><code>--ai=deepfilter</code></td>
-<td><code>myaud/catalogs/deepfilternet-coreml.json</code>, <code>.cache/issue201/deepfilternet-coreml-materialized/</code>, <code>.external/DeepFilterNet-mlx/</code></td>
+<td><code>iky1e/DeepFilterNet3-MLX</code> @ <code>2439328cfebafb28099d9feff6890e29dbae2241</code></td>
 </tr>
 <tr>
-<td>evaluation</td>
-<td><code>myaud/tools/aud-metrics.py</code></td>
+<td>evaluation (DNSMOS, UTMOS)</td>
+<td><code>TigreGotico/*-onnx</code>, revisions pinned by <code>speechonnxmetrics</code></td>
 </tr>
 </tbody>
 </table>
 <h2 id="diarization">Diarization<a class="headerlink" href="#diarization" title="Permanent link">&para;</a></h2>
 <h3 id="mlx-default"><code>mlx</code> (default)<a class="headerlink" href="#mlx-default" title="Permanent link">&para;</a></h3>
-<p>Runs <code>myasr/tools/diarize-mlx.py</code> with <code>uv run --offline --script</code> in offline
-mode. It uses the cached <code>mlx-community/Nemotron-3-Diarization-8bit</code>
-conversion and processes the complete file with its own bounded context, so
-speaker IDs are not restarted per fragment. The raw result goes to
-<code>diarization-native/report.json</code> in the run folder.</p>
+<p>Runs Nemotron-3-Diarization 8-bit with the offline AOSC preset on the whole
+file, so speaker IDs are not restarted per fragment. The raw result goes to
+<code>diarization-native.json</code> in the run folder.</p>
 <h3 id="sortformer"><code>sortformer</code><a class="headerlink" href="#sortformer" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--diarizer<span class="o">=</span>sortformer
 </code></pre></div>
-<p>Runs the native <code>nemo-speech diarize</code> host on Metal with the Q8 GGUF of
-<code>nvidia/diar_streaming_sortformer_4spk-v2</code> from the Hugging Face cache in
-<code>~/.cache/huggingface/hub</code>. This model has four speaker slots.</p>
-<p>Sortformer reports its last 80 ms frame as extending past the end of the file.
-Only that last frame is clipped to the audio duration, and the original end time
-is kept as <code>end_before_eof_clip</code> in <code>diarization-native.json</code>.</p>
+<p>Runs Streaming Sortformer 4spk v2.1 (fp16) on MLX, streamed in 30 s chunks. The
+model has four speaker slots.</p>
+<p>Both diarizers report their last 80 ms frame as extending past the end of the
+file. Only that last frame is clipped to the audio duration, and the original end
+time is kept as <code>end_before_eof_clip</code> in <code>diarization-native.json</code>.</p>
 <h3 id="supplied-turns">Supplied turns<a class="headerlink" href="#supplied-turns" title="Permanent link">&para;</a></h3>
 <p><code>--diarization_json</code> skips the diarizer. The file may be:</p>
 <ul>
@@ -904,28 +1015,28 @@ is kept as <code>end_before_eof_clip</code> in <code>diarization-native.json</co
 </ul>
 <p>Use this to reuse a diarization, or to correct one by editing its <code>turns.json</code>.</p>
 <h2 id="deepfilternet3">DeepFilterNet3<a class="headerlink" href="#deepfilternet3" title="Permanent link">&para;</a></h2>
-<p><code>--ai=deepfilter</code> runs DeepFilterNet3 through its CoreML host on the CPU before
-the VST chains. Before running, the tool checks the SHA-256 of the host binary and
-of every model file against <code>myaud/catalogs/deepfilternet-coreml.json</code>. Any
-mismatch stops the run. The host writes mono output, which is converted back to
-48 kHz stereo float; the sample count must match the input exactly.</p>
+<p><code>--ai=deepfilter</code> runs DeepFilterNet3 on MLX through <code>mlx-audio</code> before the VST
+chains. The input is downmixed to 48 kHz mono, and the output sample count must
+match the input exactly. <code>deepfilter-receipt.json</code> in the run folder lists the
+SHA-256 of every weight file.</p>
+<p>The weights are the same <code>model.safetensors</code> (SHA-256 <code>fca0af2f...</code>) as the
+CoreML package used before; outputs differ slightly from that host.</p>
 <h2 id="quality-scoring">Quality scoring<a class="headerlink" href="#quality-scoring" title="Permanent link">&para;</a></h2>
-<p>Evaluation runs <code>myaud/tools/aud-metrics.py score</code> with DNSMOS and UTMOS, two
-no-reference ONNX predictors. The interpreter is taken from:</p>
-<ol>
-<li><code>--metrics_python</code>, if given, or</li>
-<li>the first <code>aud-metrics-*</code> environment under <code>~/.cache/uv/environments-v2</code>.</li>
-</ol>
-<p>If neither exists, or a predictor fails, the error is stored for that window in
-<code>evaluation.json</code> and the run continues. A missing predictor never becomes a
-synthetic score.</p>
-<p>To skip scoring, use <code>--evaluate=False</code>.</p>
-<h2 id="working-without-the-adapters">Working without the adapters<a class="headerlink" href="#working-without-the-adapters" title="Permanent link">&para;</a></h2>
-<p>Everything except diarization, DeepFilterNet and scoring works without
-<code>VEXY_SPEAKUP_TTS_ROOT</code>:</p>
+<p>Evaluation scores matching windows with DNSMOS and UTMOS, two no-reference ONNX
+predictors from <code>speechonnxmetrics</code>, with weights redirected to the standard
+Hugging Face cache.</p>
+<p><code>--metrics_python</code> is optional: an alternative interpreter that has
+<code>vexy-speakup[models]</code> installed. By default scoring uses the current
+interpreter.</p>
+<p>If a predictor fails or the extra is missing, the error is stored for that window
+in <code>evaluation.json</code> and the run continues. A missing predictor never becomes a
+synthetic score. To skip scoring, use <code>--evaluate=False</code>.</p>
+<h2 id="working-without-the-extra">Working without the extra<a class="headerlink" href="#working-without-the-extra" title="Permanent link">&para;</a></h2>
+<p>Without the <code>models</code> extra you can still run with <code>--diarizer=none</code> (whole
+recording, no per-speaker choices), or with your own turns:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>vexy-speakup<span class="w"> </span>run<span class="w"> </span>meeting.m4a<span class="w"> </span>--diarization_json<span class="o">=</span>turns.json<span class="w"> </span>--evaluate<span class="o">=</span>False
 </code></pre></div>
-<p><code>attempts</code> always runs the <code>mlx</code> diarizer, so it needs the adapters.</p>
+<p><code>attempts</code> always runs the <code>mlx</code> diarizer, so it needs the extra.</p>
 
 
 
@@ -1037,10 +1148,17 @@ synthetic score.</p>
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+
+
+
+
+
+
+
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "code": null, "features": ["navigation.sections", "navigation.top", "navigation.footer", "toc.follow", "search.highlight", "content.code.copy", "content.code.annotate"], "search": {"options": {"baseUrl": "..", "bundleUrl": "../search/", "highlight": true, "searchOptions": {}}, "provider": "pagefind"}, "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "code.collapse": "Collapse", "code.download": "Download", "code.expand": "Expand remaining # lines", "code.select": "Toggle line selection", "search.offline": "Switch to Lunr for offline search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.fc193f93.min.js"></script>
+      <script src="../assets/javascripts/bundle.44453a05.min.js"></script>
       
     
   </body>

@@ -1,0 +1,40 @@
+# this_file: examples/config.example.toml
+# App settings; edit plugin_root for your installation.
+schema_version = 1
+
+[paths]
+plugin_root = "/Library/Audio/Plug-Ins/VST3"
+
+[processing]
+profile = "dx35"
+workers = 4
+max_chunk = 30
+target_lufs = -16
+true_peak = -2
+brightness_db = 0
+
+[candidates.podcast]
+profile = "podcast"
+suffix = "_podcast"
+
+[candidates.dx35]
+profile = "dx35"
+suffix = "_dx35"
+
+[candidates.dx35-bright]
+profile = "dx35-bright"
+suffix = "_dx35-bright"
+
+[candidates.clear]
+profile = "clear"
+suffix = "_clear"
+
+# An explicit candidate may use plugin paths relative to plugin_root.
+[candidates.lighter]
+suffix = "_lighter"
+master = []
+[[candidates.lighter.speech]]
+path = "Accentize-dxRevivePro.vst3"
+[candidates.lighter.speech.parameters]
+mix = 25.0
+bypass = false

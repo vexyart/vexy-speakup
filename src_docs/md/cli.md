@@ -1,3 +1,8 @@
+---
+this_file: src_docs/md/cli.md
+tags: [Command line]
+---
+
 # Command reference
 
 `vexy-speakup` is a [Fire](https://github.com/google/python-fire) command-line
@@ -31,7 +36,7 @@ Processes an audio or video file and prints the output path.
 | `--work_dir` | input path without its extension | folder that receives a new run folder |
 | `--output_path` | input name plus `--suffix` | output file; its extension selects the format |
 | `--suffix` | `_improved` | added to the input name when `--output_path` is empty |
-| `--profile_name` | `dx35` | built-in plugin profile: `dx35`, `dx65`, `rx6-dx35`, `rx6` or `bypass` |
+| `--profile_name` | `auto-gate-stageone` | plugin profile: `auto-gate-stageone`, `auto-gate`, `dx35`, `dx65`, `rx6-dx35`, `rx6` or `bypass` |
 | `--config_path` | empty | JSON file with custom chains; replaces the profile |
 | `--diarizer` | `mlx` | `none` for a uniform recording, `mlx` or `sortformer` for speaker detection |
 | `--diarization_json` | empty | speaker turns to use instead of a diarizer |
@@ -47,7 +52,7 @@ Processes an audio or video file and prints the output path.
 | `--force` | `False` | replace an existing output file |
 | `--verbose` | `False` | print each stage |
 | `--workers` | TOML default: `4` | isolated chunk worker limit, [1,128] |
-| `--brightness_db` | TOML default: `0` | 3 kHz speech shelf gain, [-12,12] dB |
+| `--brightness_db` | TOML default: `3` | 3 kHz speech shelf gain, [-12,12] dB |
 
 The command checks its arguments before it starts work:
 

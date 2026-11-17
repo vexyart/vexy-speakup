@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "source": "pluginary shared/research/speech-20261013.json",
+  "source_sha256": "3b18b31bb09c58bc650984e6eff5000685d991e04ca53487fd8ee3033ee25e0f",
+  "verified": "2026-10-13, installed macOS versions; Wider 2 and StageOne 2 added from listening on dual-mono speech",
+  "plugins": [
+    {
+      "bundle": "Vocal Gate.vst3",
+      "stage": "gate",
+      "open_source": true,
+      "research_id": "component/vocal-gate",
+      "role": "speech-aware gating",
+      "caveat": "Not installed in this inventory. A gate can remove wanted speech or meaningful breaths; listen to consonants and turn edges. It does not identify speakers or separate simultaneous voices.",
+      "parameters": {
+        "threshold": 0.65,
+        "floor": -20.0,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Accentize-VoiceGate2.vst3",
+      "stage": "gate",
+      "open_source": false,
+      "research_id": "vst3/VoiceGate2",
+      "role": "speech-aware noise suppression",
+      "caveat": "The public retirement notice concerns VoiceGate; installed VoiceGate2 version/successor status requires confirmation. Do not infer new licences can be purchased.",
+      "parameters": {
+        "sensitivity": 50.0,
+        "reduction": 15.0,
+        "noise_only": false,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Noise Repellent.vst3",
+      "stage": "denoise",
+      "open_source": true,
+      "research_id": "component/noise-repellent",
+      "role": "spectral denoising",
+      "caveat": "Not installed in this inventory. Mode/frame-size changes affect latency and state; do not mix profiled and adaptive settings blindly. NLM has its own worker pool, so reduce outer chunk concurrency whe",
+      "parameters": {
+        "adaptive_noise": true,
+        "learn_noise": false,
+        "master_reduction": 10.0,
+        "transient_protection": true,
+        "residual_listen": false,
+        "internal_bypass": false
+      }
+    },
+    {
+      "bundle": "RX 12 Voice De-noise.vst3",
+      "stage": "denoise",
+      "open_source": false,
+      "research_id": "vst3/RX 12 Voice De-noise",
+      "role": "voice noise reduction",
+      "caveat": "Noise learning and excessive reduction can remove low-level speech detail; check sibilants and pauses by ear.",
+      "parameters": {
+        "reduction": 6.0,
+        "adaptive_mode": true,
+        "global_bypass": false
+      }
+    },
+    {
+      "bundle": "Accentize-DeRoomPro2.vst3",
+      "stage": "dereverb",
+      "open_source": false,
+      "research_id": "vst3/DeRoomPro2",
+      "role": "dialogue dereverberation",
+      "caveat": "Do not stack strong dereverb processors without listening; room reduction does not restore missing bandwidth.",
+      "parameters": {
+        "sensitivity": 50.0,
+        "reduction": 12.0,
+        "room_only": false,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Accentize-dxRevivePro.vst3",
+      "stage": "restore",
+      "open_source": false,
+      "research_id": "vst3/dxRevive Pro",
+      "role": "restoration and bandwidth recovery",
+      "caveat": "Higher mix can add artifacts. An EQ-restoration mode does not perform noise/reverb suppression; the saved plugin algorithm must be explicit, not dependent on host defaults.",
+      "parameters": {
+        "mix": 35.0,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Accentize-dxRevive.vst3",
+      "stage": "restore",
+      "open_source": false,
+      "research_id": "vst3/dxRevive",
+      "role": "simplified speech restoration",
+      "caveat": "Do not assume Pro spectral-focus controls or algorithm settings exist.",
+      "parameters": {
+        "mix": 50.0,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Clear.vst3",
+      "stage": "restore",
+      "open_source": false,
+      "research_id": "vst3/Clear",
+      "role": "voice, ambience and reverb balancing",
+      "caveat": "Trial injects noise every 60 seconds. Neural processing can be CPU-heavy; native scan does not prove activation or artifact-free rendering.",
+      "parameters": {
+        "ambience_gain": -12.0,
+        "voice_gain": 0.0,
+        "voice_reverb_gain": -6.0,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "Accentize-DialogueEnhance2.vst3",
+      "stage": "integrated",
+      "open_source": false,
+      "research_id": "vst3/DialogueEnhance2",
+      "role": "integrated dialogue finishing",
+      "caveat": "Separate modules can duplicate processing already provided here; confirm the installed version’s actual controls.",
+      "parameters": {
+        "enable_loudness_boost": false,
+        "noise_reduction_amount": 12.0,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "pp-track.vst3",
+      "stage": "tone",
+      "open_source": true,
+      "research_id": "vst3/PodcastPlugins TRACK",
+      "role": "open-source per-speaker tone and dynamics",
+      "caveat": "Both plugins scanned successfully, but a scan is not render/latency proof. Avoid aggressive dynamics and duplicate levelling. Exposed controls include read-only meters that must never be assigned as s",
+      "parameters": {
+        "timbre": 0.0,
+        "style": -2.0,
+        "target_db": -18.0,
+        "bypass": 0.0
+      }
+    },
+    {
+      "bundle": "Wider.vst3",
+      "stage": "space",
+      "open_source": false,
+      "research_id": "vst3/Wider",
+      "role": "mono-compatible pseudo-stereo widening",
+      "caveat": "Free from Polyverse, but its EULA forbids redistribution, so it is never bundled; install it from the vendor. The mono sum is unchanged, but side energy raises stereo loudness; compare at matched loudness.",
+      "download": "https://polyversemusic.com/products/wider/",
+      "parameters": {
+        "amount_wider": 50.0,
+        "lowbypass_frequency": "161 Hz",
+        "power_power": true,
+        "mono_mono": false,
+        "bypass": false
+      }
+    },
+    {
+      "bundle": "StageOne2.vst3",
+      "stage": "space",
+      "open_source": false,
+      "research_id": "vst3/StageOne2",
+      "role": "mono spread and stereo depth",
+      "caveat": "Width acts only on off-centre content, so it does nothing on dual-mono speech; Mono Spread does. A little Depth (10) adds space; more works against dereverberation. Pedalboard offers it only a 2-in/2-out bus, so identical channels are folded to exact mono first. Reports 2048 samples of latency.",
+      "parameters": {
+        "low_mono_spread": 0.0,
+        "mid_mono_spread": 100.0,
+        "high_mono_spread": 100.0,
+        "low_depth": 0.0,
+        "mid_depth": 10.0,
+        "high_depth": 10.0,
+        "bypass": 0.0
+      },
+      "mono_input": true
+    },
+    {
+      "bundle": "pp-master.vst3",
+      "stage": "master",
+      "open_source": true,
+      "research_id": "vst3/PodcastPlugins MASTER",
+      "role": "open-source continuous mastering",
+      "caveat": "Do not reset the master between fragments or mistake meter outputs for writable controls. Final normalization can interact with its leveler.",
+      "parameters": {
+        "timbre": 0.0,
+        "target_db": -16.0,
+        "bypass": 0.0
+      }
+    },
+    {
+      "bundle": "master_me.vst3",
+      "stage": "master",
+      "open_source": true,
+      "research_id": "component/master_me",
+      "role": "continuous mastering",
+      "caveat": "Not installed in the scanned folder under this name. Preset/parameter availability and native render must be verified after installing a build; avoid double automatic levelling.",
+      "parameters": {
+        "target_db": -16.0,
+        "bypass": 0.0
+      }
+    },
+    {
+      "bundle": "Ozone 12 Maximizer.vst3",
+      "stage": "master",
+      "open_source": false,
+      "research_id": "vst3/Ozone 12 Maximizer",
+      "role": "final peak and loudness control",
+      "caveat": "A maximizer is not a denoiser or cure for muffling. Avoid aggressive upward compression that raises residual noise.",
+      "parameters": {
+        "max_output_level": -2.0,
+        "max_input_gain_db": 0.0,
+        "max_upward_compression_amt_db": 0.0,
+        "max_soft_clip_on_off": false,
+        "global_bypass": false
+      }
+    }
+  ],
+  "excluded": {
+    "vst3/SpectralBalance2": "needs a clean reference per speaker",
+    "component/matchering": "needs a reference recording",
+    "vst3/Acon Digital DeNoise 2": "profiled mode needs a learned noise print",
+    "vst3/Pro-Q 4": "EQ moves are per speaker; brightness uses the built-in shelf",
+    "vst3/Ozone 12 Clarity": "music-mastering origin; not yet listened on speech",
+    "vst3/RX 12 Mouth De-click": "optional repair, not a chain stage",
+    "vst3/Acon Digital DeVerberate 3": "not installed in the verified setup",
+    "component/dereverb-vst3": "no licence"
+  }
+}

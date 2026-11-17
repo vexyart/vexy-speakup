@@ -1,6 +1,7 @@
 # this_file: src/vexy_speakup/vst.py
 """Isolated VST rendering, real exposed parameters and bounded streaming memory."""
 
+from itertools import groupby
 from pathlib import Path
 
 import numpy as np
@@ -8,14 +9,45 @@ import soundfile as sf
 from pedalboard import Pedalboard, load_plugin
 
 from .assets import bundled_plugin
-from .effects import load_builtin
+from .effects import MonoFold, load_builtin
 from .media import RATE, write_json
 from .profiles import plugin_spec, profile
 
-__all__ = ["load_chain", "plugin_spec", "profile", "render_chunk", "render_jobs", "render_master"]
+__all__ = [
+    "load_chain",
+    "plugin_spec",
+    "profile",
+    "render_chunk",
+    "render_jobs",
+    "render_master",
+]
 
 
-def load_chain(specs: list[dict]) -> tuple[Pedalboard, list[dict]]:
+class FoldedChain:
+    """Pedalboard segments with mono folds between them; iterates like a Pedalboard.
+
+    Each segment compensates its own latency on the padded fragment, so the result
+    is aligned exactly as a single Pedalboard would be.
+    """
+
+    def __init__(self, items: list) -> None:
+        self.items = items
+
+    def __iter__(self):
+        return iter(self.items)
+
+    def __call__(self, audio, rate, buffer_size=2048, reset=True):
+        if not reset:
+            raise ValueError("Mono fold works on whole speech fragments, not streams")
+        for folds, group in groupby(self.items, key=lambda p: isinstance(p, MonoFold)):
+            for item in [*group] if folds else [Pedalboard([*group])]:
+                audio = (
+                    item(audio) if folds else item(audio, rate, buffer_size, reset=True)
+                )
+        return audio
+
+
+def load_chain(specs: list[dict]) -> tuple[Pedalboard | FoldedChain, list[dict]]:
     plugins, receipts = [], []
     for spec in specs:
         if spec["path"].startswith("builtin:"):
@@ -51,10 +83,14 @@ def load_chain(specs: list[dict]) -> tuple[Pedalboard, list[dict]]:
                 },
             }
         )
+    if any(isinstance(p, MonoFold) for p in plugins):
+        return FoldedChain(plugins), receipts
     return Pedalboard(plugins), receipts
 
 
-def render_chunk(board: Pedalboard, audio: np.ndarray, rate: int) -> np.ndarray:
+def render_chunk(
+    board: Pedalboard | FoldedChain, audio: np.ndarray, rate: int
+) -> np.ndarray:
     """Pad to drain latency, then crop the automatically compensated waveform."""
     n = len(audio)
     padded = np.pad(audio.T, ((0, 0), (0, rate * 2)))
@@ -83,9 +119,15 @@ def render_jobs(jobs: list[dict], specs: list[dict], receipt: Path) -> None:
 
 
 def render_master(source: Path, output: Path, specs: list[dict], receipt: Path) -> None:
-    """Keep master state continuous across blocks and drain buffered output at EOF."""
+    """Keep master state continuous across blocks and drain buffered output at EOF.
+
+    Every block uses reset=False after one explicit reset: pedalboard then trims the
+    chain latency once at the head. A reset=True first block pads its end, delaying
+    every later block by the latency and leaving a gap at the first block boundary.
+    """
     board, plugins = load_chain(specs)
-    written, first = 0, True
+    board.reset()
+    written = 0
     with (
         sf.SoundFile(source) as reader,
         sf.SoundFile(
@@ -100,8 +142,7 @@ def render_master(source: Path, output: Path, specs: list[dict], receipt: Path) 
         frames, rate, channels = len(reader), reader.samplerate, reader.channels
         while reader.tell() < frames:
             x = reader.read(RATE * 10, dtype="float32", always_2d=True)
-            y = board(x.T, rate, buffer_size=2048, reset=first).T
-            first = False
+            y = board(x.T, rate, buffer_size=2048, reset=False).T
             if not np.isfinite(y).all() or y.shape[1] != channels:
                 raise ValueError("Invalid master render")
             writer.write(y[: frames - written])

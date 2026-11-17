@@ -311,3 +311,23 @@ def test_video_can_explicitly_export_audio_only(source):
         "Explicit WAV omits video"
     )
     assert abs(sf.info(output).duration - 2) < 0.1
+
+
+def test_master_when_plugin_has_latency_then_aligned_across_blocks(tmp_path, monkeypatch):
+    """Streaming blocks must neither delay audio nor insert silence at block edges."""
+    from pedalboard_native._internal import AddLatency
+
+    from vexy_speakup import vst
+
+    rate = 48000
+    t = np.arange(rate * 25) / rate
+    x = (0.2 * np.sin(2 * np.pi * 440 * t)).astype(np.float32)[:, None].repeat(2, 1)
+    source, output = tmp_path / "in.wav", tmp_path / "out.wav"
+    sf.write(source, x, rate, subtype="FLOAT")
+    monkeypatch.setattr(
+        vst, "load_chain", lambda specs: (Pedalboard([AddLatency(samples=810)]), [{}])
+    )
+    vst.render_master(source, output, [], tmp_path / "receipt.json")
+    y, _ = sf.read(output, dtype="float32", always_2d=True)
+    assert y.shape == x.shape, "Duration preserved"
+    np.testing.assert_allclose(y, x, atol=1e-6, err_msg="No delay, no gap at 10 s/20 s")

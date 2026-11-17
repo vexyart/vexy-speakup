@@ -7,7 +7,7 @@
 <div class="field"><label for="folder">Audio or video folder</label><div class="inline"><input id="folder" placeholder="/path/to/recordings"><button data-browse="folder">Browse</button></div></div>
 <div class="options"><label><input type="checkbox" id="speaker">Choose separately for each speaker</label><label>Workers <input id="workers" type="number" min="1" max="128" value="4"></label></div>
 <div id="speaker-options" hidden><div class="options"><label>Speaker detection <select id="backend"><option>mlx</option><option>sortformer</option></select></label></div><label for="annotations">Existing speaker annotations folder (optional)</label><div class="inline"><input id="annotations"><button data-browse="annotations">Browse</button></div><p class="hint">Speaker numbers belong to each recording. Overlapping voices share a mixed clip.</p></div>
-<fieldset id="chain-list"><legend>Chains to compare</legend><p class="hint">Each chosen chain renders short clips in three tones. Greyed chains need plugins you do not have.</p><div id="chains-available"></div></fieldset>
+<fieldset id="chain-list"><legend>Chains to compare</legend><p class="hint">Each chosen chain renders short clips in three tones. Greyed chains need plugins you do not have.</p><div id="chains-available"></div><details id="detected"><summary>Detected speech plugins</summary><ul id="plugin-list"></ul></details></fieldset>
 <button id="prepare" class="primary">Prepare listening clips</button>
 <details><summary>Open an earlier listening session</summary><div class="inline"><input id="manifest-path" aria-label="Listening session path" placeholder="Path to preview.json"><button id="load-preview">Open session</button></div></details>
 </section>

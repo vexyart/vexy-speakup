@@ -118,3 +118,12 @@ def test_profile_when_alias_then_use_builtin():
         '[candidates.clean]\nprofile = "bypass"\nsuffix = "_clean"\n'
     )
     assert profile("clean") == {"speech": [], "speakers": {}, "master": []}
+
+
+def test_settings_when_no_file_then_default_is_accentize_stageone_brighter(tmp_path, monkeypatch):
+    monkeypatch.setenv("VEXY_SPEAKUP_CONFIG", str(tmp_path / "absent.toml"))
+    from vexy_speakup.settings import read_settings
+
+    processing = read_settings()["processing"]
+    assert processing["profile"] == "auto-gate-stageone", "Listening-chosen default chain"
+    assert processing["brightness_db"] == 3, "The chosen variant was Brighter +3 dB"

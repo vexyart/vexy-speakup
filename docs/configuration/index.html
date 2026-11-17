@@ -734,6 +734,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -840,7 +867,8 @@ plugin paths in TOML candidates resolve under <code>plugin_root</code>.</p>
 Supertone Clear before Ozone mastering. <code>podcast-bright</code> sets TRACK TIMBRE to +2.
 <code>dx35-bright</code> adds a 3 dB shelf above 3 kHz. <code>--brightness_db</code> / TOML
 <code>brightness_db</code> adds a shelf to shared and overridden speaker chains, in the
-range [-12,12] dB. Zero is neutral. Missing plugins fail explicitly.</p>
+range [-12,12] dB. The default is +3 dB; zero is neutral. Missing plugins fail
+explicitly.</p>
 <p><code>path = "builtin:high-shelf"</code> selects Pedalboard's open-source high-shelf effect
 with <code>cutoff_frequency_hz</code>, <code>gain_db</code> and <code>q</code> parameters; it works in TOML and
 JSON chains. This reserved path is not resolved as a VST bundle filename.</p>
@@ -864,7 +892,12 @@ JSON chains. This reserved path is not resolved as a VST bundle filename.</p>
 </thead>
 <tbody>
 <tr>
-<td><code>dx35</code> (default)</td>
+<td><code>auto-gate-stageone</code> (default)</td>
+<td>VoiceGate2, dxRevive Pro 35%, mono fold, StageOne 2 (Mono Spread 100, Depth 10)</td>
+<td>Ozone 12 Maximizer</td>
+</tr>
+<tr>
+<td><code>dx35</code></td>
 <td>dxRevive Pro, mix 35%</td>
 <td>Ozone 12 Maximizer</td>
 </tr>
@@ -890,7 +923,9 @@ JSON chains. This reserved path is not resolved as a VST bundle filename.</p>
 </tr>
 </tbody>
 </table>
-<p><code>dx35</code> is the conservative choice. <code>dx65</code> led DNSMOS on the Zoom excerpt it was
+<p><code>auto-gate-stageone</code> with the default +3 dB shelf won a listening comparison on
+dual-mono speech; it needs Accentize VoiceGate2 and dxRevive Pro, Leapwing
+StageOne 2 and Ozone 12. <code>dx35</code> is the conservative choice. <code>dx65</code> led DNSMOS on the Zoom excerpt it was
 tested on. <code>bypass</code> skips every plugin but still performs the level passes, which
 makes it a useful reference when you compare attempts.</p>
 <p>The profiles set these plugin parameters:</p>
@@ -1055,6 +1090,24 @@ shows its range.</p>
 
 
 
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../topics/#tag:configuration" class="md-tag md-tag-icon">Configuration</a>
+      
+    
+      
+      
+      
+      
+        <a href="../topics/#tag:developer-guide" class="md-tag md-tag-icon">Developer guide</a>
+      
+    
+  </nav>
 
 
 

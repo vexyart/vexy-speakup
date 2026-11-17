@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .batch import read_job
+from .catalog import detect, downloads
 from .listening import schedule_choices
 from .preview import prepare_preview
 from .profiles import chain_options
@@ -69,6 +70,14 @@ def create_app(input_dir: str = "") -> FastAPI:
                 if p.is_dir() and not p.name.startswith(".")
             ),
         }
+
+    @app.get("/api/plugins")
+    def plugins():
+        keys = ("bundle", "stage", "role", "caveat", "open_source", "source")
+        return [
+            {**{k: row[k] for k in keys}, "download": row.get("download", "")}
+            for row in [*detect(), *downloads()]
+        ]
 
     @app.get("/api/chains")
     def chains():
@@ -180,8 +189,20 @@ def create_app(input_dir: str = "") -> FastAPI:
 
 def gui(input_dir: str = "", port: int = 8765, open_browser: bool = True) -> None:
     """Serve the listening UI on localhost; Ctrl-C stops its native workers."""
+    import socket
+
     import uvicorn
 
+    # A wildcard listener (e.g. `python -m http.server`) lets uvicorn bind
+    # 127.0.0.1 anyway, then answers the page's API calls once uvicorn exits.
+    try:
+        socket.create_connection(("127.0.0.1", port), timeout=0.5).close()
+    except OSError:
+        pass
+    else:
+        raise OSError(
+            f"Another program already answers on port {port}; stop it or pass --port"
+        )
     if open_browser:
         Timer(1, lambda: webbrowser.open(f"http://127.0.0.1:{port}")).start()
     uvicorn.run(create_app(input_dir), host="127.0.0.1", port=port)

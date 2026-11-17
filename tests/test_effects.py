@@ -53,3 +53,31 @@ def test_builtin_when_unknown_or_native_fields_then_reject():
         load_chain([{"path": "builtin:unknown"}])
     with pytest.raises(ValueError):
         load_chain([{"path": "builtin:high-shelf", "preset": "x"}])
+
+
+def _stereo(left, right):
+    return np.stack([left, right], axis=1).astype(np.float32)
+
+
+def test_mono_fold_when_channels_nearly_identical_then_exact_mono_between_stages():
+    rate = 48000
+    x = 0.1 * np.sin(2 * np.pi * 440 * np.arange(rate) / rate)
+    near = _stereo(x, x * (1 + 1e-5))
+    shelf = {"path": "builtin:high-shelf", "parameters": {"gain_db": 3.0}}
+    board, receipt = load_chain([shelf, {"path": "builtin:mono-fold"}, shelf])
+    out = render_chunk(board, near, rate)
+    assert out.shape == near.shape and np.array_equal(out[:, 0], out[:, 1]), "Exact L=R"
+    assert [r["path"] for r in receipt] == [
+        "builtin:high-shelf", "builtin:mono-fold", "builtin:high-shelf"
+    ]
+    assert [getattr(p, "reported_latency_samples", 0) for p in board] == [0, 0, 0]
+
+
+def test_mono_fold_when_real_stereo_or_one_channel_then_unchanged():
+    rate = 48000
+    t = np.arange(rate) / rate
+    stereo = _stereo(np.sin(2 * np.pi * 440 * t), np.sin(2 * np.pi * 660 * t))
+    board, _ = load_chain([{"path": "builtin:mono-fold"}])
+    assert np.allclose(render_chunk(board, stereo, rate), stereo), "Real stereo kept"
+    mono = stereo[:, :1]
+    assert np.allclose(render_chunk(board, mono, rate), mono)

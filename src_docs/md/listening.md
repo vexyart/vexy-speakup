@@ -21,6 +21,18 @@ Closing a browser tab leaves the server and active job running.
    in your VST3 folder nor one of the bundled free plugins (hover for the missing
    names); "open source" marks chains made only of bundled free plugins. The
    list refreshes after you save Settings.
+
+   Chains marked **auto** are built from the speech plugins found in your VST3
+   folder plus the bundled free ones (open **Detected speech plugins** to see
+   them, with each plugin's role; hover for its main caveat). Each auto chain
+   uses one plugin per stage: gate, denoise, dereverb, restore or an integrated
+   dialogue processor, then tone, with limiting only in the master.
+   `auto-free-denoise` (Noise Repellent, PodcastPlugins TRACK, master_me) and
+   `auto-free-gate` (Vocal Gate, PodcastPlugins TRACK and MASTER) are always
+   available. Commercial auto chains appear when their plugins are installed,
+   e.g. `auto-clean` = RX Voice De-noise, DeRoom Pro, dxRevive Pro, Ozone
+   Maximizer. Settings are conservative starting points verified on the
+   installed versions; the listening step is where you judge them.
 3. Choose **Prepare listening clips**. The app decodes each recording once and
    chooses an energy-rich excerpt. This is a sampling heuristic, so review
    difficult sections of the full outputs too.

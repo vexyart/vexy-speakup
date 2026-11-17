@@ -45,19 +45,7 @@ markdown_extensions:
   - pymdownx.tabbed: {alternate_style: true}
   - pymdownx.tasklist: {custom_checkbox: true}
 plugins:
-  - search
-nav:
-  - Home: index.md
-  - Installation: installation.md
-  - Quickstart: quickstart.md
-  - Command reference: cli.md
-  - Profiles and custom chains: configuration.md
-  - Folder jobs and saved choices: batch.md
-  - Listen and choose in your browser: listening.md
-  - How processing works: processing.md
-  - Processing details and limits: processing-details.md
-  - Run folders and reports: outputs.md
-  - Local models: local-models.md
-  - Troubleshooting: troubleshooting.md
-  - Development: development.md
-  - Changelog: changelog.md
+  - materialx/meta
+  - materialx/tags
+  - awesome-nav
+  - materialx/search

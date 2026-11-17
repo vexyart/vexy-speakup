@@ -43,6 +43,12 @@ def test_browser_when_listening_then_save_run_resume_and_serve_ranges(
     with TestClient(create_app(str(folder))) as client:
         assert "Listen. Choose." in client.get("/").text
         assert client.get("/assets/app.js").status_code == 200
+        plugins = client.get("/api/plugins").json()
+        bundles = {row["bundle"] for row in plugins}
+        assert all(row["download"] for row in plugins if row["source"] == "download")
+        assert "Noise Repellent.vst3" in bundles, "Bundled free plugins always detected"
+        chains = {row["name"]: row for row in client.get("/api/chains").json()}
+        assert chains["auto-free-denoise"]["open_source"] and chains["podcast"]["available"]
         assert client.get("/api/folders", params={"path": str(tmp_path)}).json()[
             "folders"
         ] == ["input"]
@@ -138,3 +144,20 @@ def test_browser_when_busy_then_cancel_stops_worker_and_rejects_mutations(
             time.sleep(0.01)
         state = client.get("/api/state").json()
         assert not state["busy"] and state["message"] == "Stopped"
+
+
+def test_gui_when_port_answers_then_refuses_before_serving(monkeypatch):
+    """A stale server on the port would answer the page's API calls with HTML."""
+    import socket
+
+    import uvicorn
+
+    from vexy_speakup.web import gui
+
+    monkeypatch.setattr(uvicorn, "run", lambda *a, **k: pytest.fail("served anyway"))
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        listener.listen()
+        port = listener.getsockname()[1]
+        with pytest.raises(OSError, match=f"port {port}"):
+            gui(port=port, open_browser=False)

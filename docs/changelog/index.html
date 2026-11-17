@@ -16,6 +16,8 @@
         <link rel="prev" href="../development/">
       
       
+        <link rel="next" href="../topics/">
+      
       
         
       
@@ -681,6 +683,28 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unreleased
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.0.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#100" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -695,6 +719,33 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -726,6 +777,28 @@
     <ul class="md-nav__list" data-md-component="toc">
       
         <li class="md-nav__item">
+  <a href="#unreleased" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Unreleased
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#102" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1.0.2
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#100" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -755,6 +828,27 @@
 
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="unreleased">Unreleased<a class="headerlink" href="#unreleased" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Fixed a mastering bug: with a latent master plugin (Ozone 12 Maximizer,
+  PodcastPlugins MASTER), audio after the first 10 seconds was delayed by the
+  plugin latency (10–17 ms) with a short silence at the 10-second mark. Outputs
+  now align within 3 samples. Re-render files mastered with those plugins.</li>
+<li>Detects the researched speech plugins in your VST3 folder and lists them in
+  the browser interface with their role.</li>
+<li>Adds automatic <code>auto-*</code> chains built from the detected plugins; two fully
+  open-source ones are always available.</li>
+</ul>
+<h2 id="102">1.0.2<a class="headerlink" href="#102" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Local models are bundled (optional <code>models</code> extra) and use the standard
+  Hugging Face cache; <code>VEXY_SPEAKUP_TTS_ROOT</code> is gone.</li>
+<li>Free GPL plugins download on demand from the vexy-speakup-assets repository
+  (<code>assets fetch</code>, <code>assets list</code>); on Windows, Vocal Gate runs its installer.</li>
+<li>The browser interface lets you choose which chains to compare, no longer
+  forces a shared master in speaker mode, and offers an optional final master.</li>
+<li>Neighbouring fragments crossfade into each other over 40 ms.</li>
+</ul>
 <h2 id="100">1.0.0<a class="headerlink" href="#100" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Ported the <code>speech-polish</code> script collection into the installable
@@ -777,6 +871,17 @@
 
 
 
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../topics/#tag:developer-guide" class="md-tag md-tag-icon">Developer guide</a>
+      
+    
+  </nav>
 
 
 
@@ -836,6 +941,22 @@
             </div>
           </a>
         
+        
+          
+          <a href="../topics/" class="md-footer__link md-footer__link--next" aria-label="Next: Topics">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Topics
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
         
       </nav>
     

@@ -1,3 +1,8 @@
+---
+this_file: src_docs/md/configuration.md
+tags: [Configuration]
+---
+
 # Profiles and custom chains
 
 Application settings are TOML, stored at the platformdirs user config path:
@@ -21,7 +26,8 @@ The four default listening candidates are `podcast`, `dx35`, `dx35-bright` and
 Supertone Clear before Ozone mastering. `podcast-bright` sets TRACK TIMBRE to +2.
 `dx35-bright` adds a 3 dB shelf above 3 kHz. `--brightness_db` / TOML
 `brightness_db` adds a shelf to shared and overridden speaker chains, in the
-range [-12,12] dB. Zero is neutral. Missing plugins fail explicitly.
+range [-12,12] dB. The default is +3 dB; zero is neutral. Missing plugins fail
+explicitly.
 
 `path = "builtin:high-shelf"` selects Pedalboard's open-source high-shelf effect
 with `cutoff_frequency_hz`, `gain_db` and `q` parameters; it works in TOML and
@@ -41,13 +47,16 @@ You choose chains with a built-in profile (`--profile_name`) or a JSON file
 
 | Profile | Speech chain | Master chain |
 | --- | --- | --- |
-| `dx35` (default) | dxRevive Pro, mix 35% | Ozone 12 Maximizer |
+| `auto-gate-stageone` (default) | VoiceGate2, dxRevive Pro 35%, mono fold, StageOne 2 (Mono Spread 100, Depth 10) | Ozone 12 Maximizer |
+| `dx35` | dxRevive Pro, mix 35% | Ozone 12 Maximizer |
 | `dx65` | dxRevive Pro, mix 65% | Ozone 12 Maximizer |
 | `rx6-dx35` | RX 12 Voice De-noise at 6 dB, then dxRevive Pro at 35% | Ozone 12 Maximizer |
 | `rx6` | RX 12 Voice De-noise at 6 dB | Ozone 12 Maximizer |
 | `bypass` | none | none |
 
-`dx35` is the conservative choice. `dx65` led DNSMOS on the Zoom excerpt it was
+`auto-gate-stageone` with the default +3 dB shelf won a listening comparison on
+dual-mono speech; it needs Accentize VoiceGate2 and dxRevive Pro, Leapwing
+StageOne 2 and Ozone 12. `dx35` is the conservative choice. `dx65` led DNSMOS on the Zoom excerpt it was
 tested on. `bypass` skips every plugin but still performs the level passes, which
 makes it a useful reference when you compare attempts.
 

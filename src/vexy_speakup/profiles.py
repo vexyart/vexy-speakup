@@ -23,7 +23,10 @@ def chain_options() -> list[dict]:
     settings = read_settings()
     bundled = {entry["bundle"] for entry in available()}
     rows = []
-    for name in dict.fromkeys([*settings["candidates"], *BUILTIN]):
+    from .catalog import SUGGESTED, auto_chains
+
+    automatic = list(auto_chains())
+    for name in dict.fromkeys([*settings["candidates"], *automatic, *BUILTIN]):
         config = profile(name)
         plugins = [
             Path(spec["path"]).expanduser()
@@ -38,7 +41,9 @@ def chain_options() -> list[dict]:
                 "available": not missing,
                 "missing": missing,
                 "open_source": bool(plugins) and all(p.name in bundled for p in plugins),
-                "suggested": name in settings["candidates"] and not missing,
+                "suggested": (name in settings["candidates"] or name in SUGGESTED)
+                and not missing,
+                "automatic": name in automatic,
             }
         )
     return rows
@@ -63,6 +68,13 @@ def profile(name: str) -> dict:
         if alias == name:
             break
         name = alias
+    if name.startswith("auto-"):
+        from .catalog import auto_chains
+
+        chains = auto_chains()
+        if name not in chains:
+            raise ValueError(f"{name} needs plugins that are not installed")
+        return chains[name]
     dx = plugin_spec("Accentize-dxRevivePro.vst3", mix=35.0, bypass=False)
     rx = plugin_spec(
         "RX 12 Voice De-noise.vst3",

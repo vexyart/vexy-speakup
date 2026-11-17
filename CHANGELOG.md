@@ -1,7 +1,62 @@
 <!-- this_file: CHANGELOG.md -->
 # Changelog
 
+## Unreleased
+- Default chain is now `auto-gate-stageone` with `brightness_db = 3` (was `dx35`,
+  0), the result of listening on dual-mono speech. It needs VoiceGate2,
+  dxRevive Pro, StageOne 2 and Ozone 12; without them `run` stops with "needs
+  plugins that are not installed" — pass `--profile_name` to choose another.
+  The +3 dB default also applies to `schedule` candidates; set
+  `brightness_db = 0` in the TOML to keep the old tone.
+- `auto-gate-stageone` now adds a little StageOne 2 Depth (10 on the mid and
+  high bands) and folds near-identical channels (side 60 dB or more below mid)
+  to exact mono (`builtin:mono-fold`) directly before StageOne. Pedalboard
+  0.9.26 offers StageOne only a 2-in/2-out bus, so it cannot receive a
+  1-channel signal; exact L = R is the closest equivalent. Real stereo and
+  single-channel audio pass unchanged. Chains with a fold run as Pedalboard
+  segments, each compensating its own latency; streaming (master) chains
+  reject a fold. Other chains, including `auto-gate`, are unchanged.
+- Spatial stage after Accentize restoration: `auto-gate-wider` (VoiceGate2,
+  dxRevive Pro 35 %, Polyverse Wider 50 % with low bypass at 161 Hz) and
+  `auto-gate-stageone` (same, then Leapwing StageOne 2 Mono Spread 100 on the
+  mid and high bands, Depth 0). Both appear only when the plugin is installed;
+  `auto-gate` is unchanged. Wider is free but its EULA forbids redistribution,
+  so it is not bundled: the GUI plugin list links to the vendor download when
+  it is missing. On dual-mono speech Wider gives side/mid −6.7 dB and StageOne
+  −17 dB, with an unchanged mono sum and no timing offset.
+- Fixed: `gui` started alongside a wildcard listener on the same port (a stale
+  `python -m http.server 8765`) and, once it exited, the page's API calls hit
+  that server and failed with `Unexpected token '<', "<!DOCTYPE "...`. `gui`
+  now refuses a port that already answers, and the page reports a stopped
+  server in plain words instead of a JSON parse error.
+- Fixed: continuous mastering delayed everything after the first 10 s block by
+  the master chain's latency and left that much silence at the 10 s boundary
+  (pedalboard pads a reset=True block). Measured before the fix: 810 samples
+  (16.9 ms) with Ozone 12 Maximizer, 479 (10 ms) with PodcastPlugins MASTER.
+  `render_master` now resets once and streams every block with reset=False;
+  outputs align within 3 samples. Outputs mastered with a latent plugin up to
+  1.0.2 carry this offset.
+- Speech plugin detection: `plugin_catalog.json` snapshots the Pluginary speech
+  research (role, caveat, source SHA-256) with settings verified on installed
+  versions. The VST3 folder is scanned by file name only (vendor subfolders,
+  never inside bundles); bundled free plugins always count. The GUI lists
+  "Detected speech plugins" (`/api/plugins`).
+- Automatic chains (`auto-free-denoise`, `auto-free-gate`, `auto-restore`,
+  `auto-clean`, `auto-gate`, `auto-dialogue`): one plugin per stage (gate,
+  denoise, dereverb, restore, integrated, tone; limiters only in master), built
+  from what is detected. The two open-source chains always exist. Usable
+  anywhere a profile name is (`--profile_name=auto-clean`, candidates, GUI).
+
 ## 1.0.2
+- GUI: choose which chains to compare (configured candidates plus built-in
+  profiles); chains whose plugins are neither installed nor bundled are greyed
+  out with the missing names (`/api/chains`, `profiles.chain_options`).
+- GUI speaker mode no longer forces a shared mastering chain. Speaker clips use
+  the speech chain plus loudness/peak levelling; an optional final master is
+  chosen after listening (default none). Overlaps use the dominant speaker's
+  chain.
+- Assembly crossfades adjacent fragments into each other over 40 ms using both
+  renders' context, replacing the 10 ms fades through unprocessed audio.
 - Free plugins (PodcastPlugins 1.0.0, master_me 1.3.1, Noise Repellent 0.4.1,
   Vocal Gate 1.0.5; macOS + Windows x64) now live in the
   Git LFS repo `vexyart/vexy-speakup-assets`. The package ships a pinned
@@ -76,3 +131,9 @@
   `/Library/Audio/Plug-Ins/VST3` (`VEXY_SPEAKUP_PLUGIN_ROOT`), and local model
   adapters come from `VEXY_SPEAKUP_TTS_ROOT`, resolved only when used.
 - Folded the standalone plugin probe script into the `probe` command.
+
+## 2026-10-18: documentation plugins
+
+- Use MaterialX search, inherited metadata and a topic index; keep ordered navigation in awesome-nav.
+- The documentation wrapper installs the plugins required by this site.
+- Strict documentation build and rendered output checks passed.

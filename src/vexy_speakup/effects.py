@@ -1,12 +1,37 @@
 # this_file: src/vexy_speakup/effects.py
-"""Explicit speech brightness using Pedalboard's open-source high-shelf filter."""
+"""Built-in effects: explicit speech brightness, and an exact mono fold for upmixers."""
 
 import math
 from copy import deepcopy
 
+import numpy as np
 from pedalboard import HighShelfFilter
 
 HIGH_SHELF = "builtin:high-shelf"
+MONO_FOLD = "builtin:mono-fold"
+# Side this far below mid counts as identical channels (dual-mono recordings).
+IDENTICAL_DB = -60.0
+
+
+class MonoFold:
+    """Replace near-identical stereo with exact mono (L = R = mid).
+
+    StageOne 2 only exposes a 2-in/2-out bus to pedalboard, so a mono source has to
+    reach it as exact L = R. Real stereo and single-channel audio pass unchanged.
+    """
+
+    reported_latency_samples = 0
+
+    def __call__(self, audio: np.ndarray) -> np.ndarray:
+        if audio.shape[0] != 2:
+            return audio
+        mid = audio.mean(axis=0)
+        side = (audio[0] - audio[1]) / 2
+        if np.sqrt(np.mean(side**2)) > np.sqrt(np.mean(mid**2)) * 10 ** (
+            IDENTICAL_DB / 20
+        ):
+            return audio
+        return np.stack([mid, mid]).astype(audio.dtype)
 
 
 def brighten(config: dict, gain_db: float) -> dict:
@@ -32,10 +57,27 @@ def brighten(config: dict, gain_db: float) -> dict:
     return result
 
 
-def load_builtin(spec: dict) -> tuple[HighShelfFilter, dict]:
-    """Load only the supported built-in effect; never interpret arbitrary class names."""
+def load_builtin(spec: dict) -> tuple[HighShelfFilter | MonoFold, dict]:
+    """Load only the supported built-in effects; never interpret arbitrary class names."""
+    if (
+        spec["path"] == MONO_FOLD
+        and not spec.get("parameters")
+        and spec.keys()
+        <= {
+            "path",
+            "parameters",
+        }
+    ):
+        return MonoFold(), {
+            "path": MONO_FOLD,
+            "name": "MonoFold",
+            "parameters": {"identical_db": IDENTICAL_DB},
+            "reported_latency_samples": 0,
+        }
     if spec["path"] != HIGH_SHELF or spec.keys() - {"path", "parameters"}:
-        raise ValueError("Supported built-in: builtin:high-shelf with parameters")
+        raise ValueError(
+            "Supported built-ins: builtin:high-shelf with parameters, builtin:mono-fold"
+        )
     plugin = HighShelfFilter(**spec.get("parameters", {}))
     parameters = {
         key: getattr(plugin, key) for key in ("cutoff_frequency_hz", "gain_db", "q")

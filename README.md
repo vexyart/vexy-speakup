@@ -139,12 +139,14 @@ never synthetic scores.
 
 PodcastPlugins, master_me, Noise Repellent and Vocal Gate (GPL-3.0, macOS and
 Windows x64) ship from [vexy-speakup-assets](https://github.com/vexyart/vexy-speakup-assets),
-pinned by commit and SHA-256. A chain plugin missing from `plugin_root` is fetched
-on first use; `vexy-speakup assets fetch` downloads all, `assets list` shows them.
+pinned by SHA-256 and fetched on first use (`assets fetch`, `assets list`).
+`auto-*` profiles are chains built from the detected speech plugins.
 
 ## Profiles and custom chains
 
-`dx35` is the conservative default: dxRevive at 35%, followed by Ozone Maximizer.
+The default is `auto-gate-stageone` with a +3 dB shelf: VoiceGate2, dxRevive Pro
+at 35%, then StageOne 2 (Mono Spread 100, Depth 10) and Ozone Maximizer.
+`dx35` is the conservative choice: dxRevive at 35%, followed by Ozone Maximizer.
 `dx65` raises restoration to 65%; it led DNSMOS on the tested Zoom excerpt.
 `rx6-dx35` adds RX Voice De-noise at 6 dB before dxRevive.
 `rx6` uses RX alone. `bypass` skips VSTs but keeps the level passes.

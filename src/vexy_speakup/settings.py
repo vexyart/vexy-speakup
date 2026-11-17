@@ -16,12 +16,12 @@ DEFAULTS = {
     "schema_version": 1,
     "paths": {"plugin_root": "/Library/Audio/Plug-Ins/VST3"},
     "processing": {
-        "profile": "dx35",
+        "profile": "auto-gate-stageone",
         "workers": 4,
         "max_chunk": 30,
         "target_lufs": -16,
         "true_peak": -2,
-        "brightness_db": 0,
+        "brightness_db": 3,
     },
     "candidates": {
         name: {"profile": name, "suffix": f"_{name}"}

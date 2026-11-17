@@ -701,6 +701,33 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../topics/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Topics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -776,21 +803,32 @@ Closing a browser tab leaves the server and active job running.</p>
    in your VST3 folder nor one of the bundled free plugins (hover for the missing
    names); "open source" marks chains made only of bundled free plugins. The
    list refreshes after you save Settings.</li>
-<li>Choose <strong>Prepare listening clips</strong>. The app decodes each recording once and
+</ol>
+<p>Chains marked <strong>auto</strong> are built from the speech plugins found in your VST3
+   folder plus the bundled free ones (open <strong>Detected speech plugins</strong> to see
+   them, with each plugin's role; hover for its main caveat). Each auto chain
+   uses one plugin per stage: gate, denoise, dereverb, restore or an integrated
+   dialogue processor, then tone, with limiting only in the master.
+   <code>auto-free-denoise</code> (Noise Repellent, PodcastPlugins TRACK, master_me) and
+   <code>auto-free-gate</code> (Vocal Gate, PodcastPlugins TRACK and MASTER) are always
+   available. Commercial auto chains appear when their plugins are installed,
+   e.g. <code>auto-clean</code> = RX Voice De-noise, DeRoom Pro, dxRevive Pro, Ozone
+   Maximizer. Settings are conservative starting points verified on the
+   installed versions; the listening step is where you judge them.
+3. Choose <strong>Prepare listening clips</strong>. The app decodes each recording once and
    chooses an energy-rich excerpt. This is a sampling heuristic, so review
-   difficult sections of the full outputs too.</li>
-<li>Compare the level-matched original and three tone variants for each chain:
+   difficult sections of the full outputs too.
+4. Compare the level-matched original and three tone variants for each chain:
    preset, +3 dB brightness, and −3 dB brightness. Playback pauses other clips.
-   Failed plugins display errors on their clips; other chains still render.</li>
-<li>Select the tone for every chain you want to keep, or <strong>Skip this chain</strong>.
+   Failed plugins display errors on their clips; other chains still render.
+5. Select the tone for every chain you want to keep, or <strong>Skip this chain</strong>.
    Global choices apply to every recording in the folder. Select an optional
    output folder, then <strong>Save batch job</strong>. Saving verifies the preview and
-   source hashes and snapshots the selected recipes.</li>
-<li>Choose <strong>Run / resume job</strong>. Each selected chain produces its own suffix.
+   source hashes and snapshots the selected recipes.
+6. Choose <strong>Run / resume job</strong>. Each selected chain produces its own suffix.
    <strong>Stop processing</strong> cancels native workers; completed outputs are retained.
    Resume verifies outputs and reports before skipping them. <strong>Replace existing
-   outputs</strong> permits replacement when retrying a failed or changed output.</li>
-</ol>
+   outputs</strong> permits replacement when retrying a failed or changed output.</p>
 <p>Saved job paths appear in the interface and can be opened in another session,
 including jobs made with the CLI. Run the same saved job without the browser:
 <code>vexy-speakup job /path/to/job.json</code>. Earlier previews can be opened using their
@@ -825,6 +863,17 @@ once as <code>config.toml.bak</code>. Environment root overrides remain authorit
 
 
 
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../topics/#tag:developer-guide" class="md-tag md-tag-icon">Developer guide</a>
+      
+    
+  </nav>
 
 
 

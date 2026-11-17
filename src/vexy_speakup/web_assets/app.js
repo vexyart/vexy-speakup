@@ -3,7 +3,7 @@ import {installFolders, installSettings} from './dialogs.js';
 export const $ = id => document.getElementById(id);
 export async function api(path, body) {
   const response = await fetch('/api/' + path, body === undefined ? {} : {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const result = await response.json();
+  const result = await response.json().catch(() => { throw new Error('The vexy-speakup server is not answering (it stopped, or another program uses this port). Restart it, then load your listening session.'); });
   if (!response.ok) throw new Error(typeof result.detail === 'string' ? result.detail : JSON.stringify(result.detail));
   return result;
 }
@@ -95,10 +95,20 @@ function showChainOptions(rows){
     const label=document.createElement('label'), box=document.createElement('input');
     box.type='checkbox'; box.value=row.name; box.checked=row.suggested; box.disabled=!row.available;
     label.title=row.available?'':'Needs '+row.missing.join(', ');
-    label.append(box,document.createTextNode(' '+row.name+(row.open_source?' · open source':'')+(row.available?'':' · unavailable')));
+    label.append(box,document.createTextNode(' '+row.name+(row.open_source?' · open source':'')+(row.automatic?' · auto':'')+(row.available?'':' · unavailable')));
     return label;
   }));
 }
+function showPlugins(rows){
+  $('detected').querySelector('summary').textContent=`Detected speech plugins (${rows.length})`;
+  $('plugin-list').replaceChildren(...rows.map(row=>{
+    const item=document.createElement('li');
+    item.textContent=`${row.bundle.replace(/\.vst3$/,'')} · ${row.stage} · ${row.role}${row.open_source?' · open source':''}${row.source==='bundled'?' · bundled, downloads on first use':''}`;
+    if(row.source==='download'){const link=document.createElement('a');link.href=row.download;link.target='_blank';link.rel='noopener';link.textContent='free download from the vendor';item.append(' · not installed · ',link);}
+    item.title=row.caveat; return item;
+  }));
+}
+function loadPlugins(){return Promise.all([api('chains'),api('plugins')]).then(([chains,plugins])=>{showChainOptions(chains);showPlugins(plugins);});}
 action('prepare',()=>api('preview',{input_dir:$('folder').value,speaker_mode:$('speaker').checked,diarizer:$('backend').value,diarization_dir:$('annotations').value,workers:Number($('workers').value),chains:selectedChains()}));
 action('save',()=>api('schedule',{global_choices:globalChoices,speaker_choices:speakerChoices,output_dir:$('output').value,master_name:manifest?.speaker_mode?$('final-master').value:''}));
 action('run',()=>api('run',{workers:Number($('workers').value),force:$('force').checked}));
@@ -106,11 +116,10 @@ action('cancel',()=>api('cancel',{}));
 action('load-job',()=>api('job/load',{path:$('job-path').value}));
 action('load-preview',()=>api('preview/load',{path:$('manifest-path').value}));
 installFolders();installSettings();
-document.addEventListener('settings-saved',()=>api('chains').then(showChainOptions).catch(fail));
+document.addEventListener('settings-saved',()=>loadPlugins().catch(fail));
 async function init(){
-  const [state,settings,chains]=await Promise.all([api('state'),api('settings'),api('chains')]);
+  const [state,settings]=await Promise.all([api('state'),api('settings'),loadPlugins()]);
   $('folder').value=state.input_dir;$('workers').value=settings.values.processing.workers;
-  showChainOptions(chains);
   await refresh(); setInterval(()=>refresh().catch(fail),1000);
 }
 init().catch(fail);

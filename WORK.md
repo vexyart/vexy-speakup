@@ -202,3 +202,28 @@ wheel/sdist contain the model worker, asset manifest and web application, with
 private recordings, model weights and local paths excluded. The pinned asset
 manifest matches the companion repository; ten binaries match hashes and sizes,
 four corresponding source archives are present, and LFS integrity passed.
+
+## Listening workflow, junction blend, plugin detection — 2026-10-13
+
+- GUI chain selection (`/api/chains`), speaker mode without forced master
+  (optional final master, default none; overlaps follow the dominant speaker).
+  Browser-verified: speaker 0 podcast +3 dB, speaker 1 dx35 → 60 s output,
+  −16.1 LUFS, −2.1 dBTP.
+- Assembly crossfades neighbours over 40 ms (renders' own context). 47-fragment
+  diarized clip: largest sample jump at cuts 0.036 < clip p99 0.042.
+- Found and fixed master latency bug (see CHANGELOG): before 811/476-sample lag,
+  after ≤3 samples across 10 s block edges for all six auto chains.
+- Auto chains from `plugin_catalog.json`; every setting checked on the installed
+  plugin; each chain renders the 60 s clip with exact frames, −19 dB RMS, and
+  −4…−8 dB level-matched difference from input (not passthrough). Browser
+  global flow: auto-free-denoise + auto-clean → −16.0 LUFS, −2.0 dBTP.
+- Tests: 107 passed, ruff clean.
+- Gaps: Windows untested; auto-chain settings verified on this Mac only;
+  scan cache keys on the VST3 folder's mtime (new plugins in a vendor
+  subfolder may need a restart).
+
+## 2026-10-18: documentation plugins
+
+- Use MaterialX search, inherited metadata and a topic index; keep ordered navigation in awesome-nav.
+- The documentation wrapper installs the plugins required by this site.
+- Strict documentation build and rendered output checks passed.

@@ -25,4 +25,6 @@ FFmpeg/ffprobe are external executables for decoding, R128 levelling, encoding
 and video remuxing. Commercial VST3 plugins are user-installed and not distributed.
 
 Build: hatchling with hatch-vcs (version from git tags).
+Documentation: `src_docs/build.sh` installs ProperDocs, MkDocs, MaterialX,
+fly-january 0.1.1, awesome-nav and PyMdown Extensions with `uvx`.
 Tests/build: pytest, pytest-cov, ruff, build, twine and HTTPX (browser API tests).

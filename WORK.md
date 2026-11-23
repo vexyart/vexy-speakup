@@ -227,3 +227,14 @@ four corresponding source archives are present, and LFS integrity passed.
 - Use MaterialX search, inherited metadata and a topic index; keep ordered navigation in awesome-nav.
 - The documentation wrapper installs the plugins required by this site.
 - Strict documentation build and rendered output checks passed.
+
+## 2026-11-24 — Documentation theme
+
+- `./build.sh docs` rebuilt the Pages site with fly-january 0.1.1 on Python
+  3.13. The strict build exited 0 with no warnings.
+- All 16 HTML files use the published Fly stylesheet and scripts, native
+  navigation and the stock MaterialX favicon. The chrome uses the labels
+  “Speakup” and “GitHub”. Search indexes 102 sections across 15 content pages.
+- `./test.sh` stopped at the cancellation test because the sandbox denied
+  execution of `ps`. A full pytest run recorded 113 passed, one failure at
+  the same process check and 86% coverage. Ruff passed.

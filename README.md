@@ -197,5 +197,6 @@ next `vX.Y.Z` tag and pushes. It stops if HEAD carries no such tag, then builds
 the package and runs `uv publish`. It does not run the tests, so run
 `./test.sh` first.
 
-The documentation source is in `src_docs/md/`; `src_docs/build.sh` builds it
-into `docs/`, which GitHub Pages serves.
+The documentation source is in `src_docs/md/`. Run `./build.sh docs` for a
+strict ProperDocs build with fly-january 0.1.1 and native navigation
+(`extra.fly.chrome: none`). GitHub Pages serves the result from `docs/`.

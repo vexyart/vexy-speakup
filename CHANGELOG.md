@@ -2,6 +2,7 @@
 # Changelog
 
 ## Unreleased
+- Site now uses the fly-january 0.1.1 theme (chrome: none).
 - Default chain is now `auto-gate-stageone` with `brightness_db = 3` (was `dx35`,
   0), the result of listening on dual-mono speech. It needs VoiceGate2,
   dxRevive Pro, StageOne 2 and Ozone 12; without them `run` stops with "needs

@@ -1,15 +1,15 @@
 # this_file: src_docs/mkdocs.yml
-site_name: vexy-speakup
+site_name: Speakup
 site_description: Diarize, restore, level and master recorded speech with local VST3 plugins, keeping the video timeline
 site_url: https://vexy.dev/vexy-speakup/
 repo_url: https://github.com/vexyart/vexy-speakup
-repo_name: vexyart/vexy-speakup
+repo_name: GitHub
 edit_uri: edit/main/src_docs/md/
 docs_dir: md
 site_dir: ../docs
 use_directory_urls: true
 theme:
-  name: materialx
+  name: fly-january
   features:
     - navigation.sections
     - navigation.top
@@ -20,12 +20,8 @@ theme:
     - content.code.annotate
   palette:
     - scheme: default
-      primary: indigo
-      accent: indigo
       toggle: {icon: material/brightness-7, name: Switch to dark mode}
     - scheme: slate
-      primary: indigo
-      accent: indigo
       toggle: {icon: material/brightness-4, name: Switch to light mode}
 markdown_extensions:
   - abbr
@@ -45,7 +41,13 @@ markdown_extensions:
   - pymdownx.tabbed: {alternate_style: true}
   - pymdownx.tasklist: {custom_checkbox: true}
 plugins:
-  - materialx/meta
-  - materialx/tags
+  - meta
+  - tags
   - awesome-nav
-  - materialx/search
+  - search
+  - fly
+extra:
+  fly:
+    chrome: none
+    hue: indigo
+    links: accent

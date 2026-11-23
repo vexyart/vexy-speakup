@@ -1,4 +1,4 @@
-# vexy-speakup
+# vexy-speakup {data-toc-label="Speakup"}
 
 `vexy-speakup` restores a recorded conversation with the VST3 speech plugins you
 already have installed. It works one speaker at a time, levels each speaker,

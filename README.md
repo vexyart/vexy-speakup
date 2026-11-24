@@ -198,5 +198,5 @@ Untagged commits build as development versions with a local segment, which
 PyPI rejects. The generated `src/vexy_speakup/__version__.py` is ignored by git.
 
 The documentation source is in `src_docs/md/`. Run `./build.sh docs` for a
-strict ProperDocs build with fly-january 0.2.1 and native navigation
+strict ProperDocs build with fly-january 0.3.0 or later and native navigation
 (`extra.fly.chrome: none`). GitHub Pages serves the result from `docs/`.

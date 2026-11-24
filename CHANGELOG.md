@@ -3,6 +3,7 @@
 
 ## Unreleased
 
+- Documentation now uses fly-january 0.4.0 or later (remote theme assets).
 - Documentation builds now use fly-january 0.3.0 or later.
 - PyPI releases use GitHub Actions Trusted Publishing. The PyPI project owner must configure the publisher for `vexyart/vexy-speakup`, workflow `release.yml`, environment `pypi`.
 - Built and twine-checked the wheel and sdist, inspected their contents and verified each clean install by running `vexy-speakup version` from outside the checkout.

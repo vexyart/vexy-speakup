@@ -56,7 +56,7 @@ commit builds a development version, which PyPI does not accept.
 ## Documentation
 
 The documentation source is in `src_docs/md/`, and `src_docs/mkdocs.yml`
-configures ProperDocs with fly-january 0.3.0 or later and native navigation
+configures ProperDocs with fly-january 0.4.0 or later (remote theme assets) and native navigation
 (`extra.fly.chrome: none`). The wrapper installs its pinned documentation tools
 with `uvx` on Python 3.13.
 

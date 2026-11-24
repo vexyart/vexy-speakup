@@ -75,9 +75,11 @@ rebuilds `docs/` through the `Docs` workflow.
 ./publish.sh
 ```
 
-`publish.sh` runs `uvx gitnextver`, which commits pending changes, creates the
-next `vX.Y.Z` tag and pushes. It stops if `HEAD` then carries no such tag. It
-then builds the package from that tag and uploads it with `uv publish`. A
-credential such as `UV_PUBLISH_TOKEN` must be set.
+Run `./test.sh` and push the intended commit to the default branch before
+releasing. Sign in to the GitHub CLI. By default, `./publish.sh` requests the
+next patch version. Pass a tag such as `v1.4.0` to select a version explicitly.
 
-Run `./test.sh` before you publish; `publish.sh` does not run the tests.
+The script dispatches `release.yml` on GitHub. The workflow creates the tag
+if needed, builds the tagged source and attaches the wheel and sdist to a
+GitHub release. Its `pypi` job uploads those artifacts through PyPI Trusted
+Publishing using the GitHub environment named `pypi`.

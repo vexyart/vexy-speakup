@@ -1002,11 +1002,13 @@ rebuilds <code>docs/</code> through the <code>Docs</code> workflow.</p>
 <h2 id="release">Release<a aria-label="Permanent link" class="headerlink" href="#release" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>./publish.sh
 </code></pre></div>
-<p><code>publish.sh</code> runs <code>uvx gitnextver</code>, which commits pending changes, creates the
-next <code>vX.Y.Z</code> tag and pushes. It stops if <code>HEAD</code> then carries no such tag. It
-then builds the package from that tag and uploads it with <code>uv publish</code>. A
-credential such as <code>UV_PUBLISH_TOKEN</code> must be set.</p>
-<p>Run <code>./test.sh</code> before you publish; <code>publish.sh</code> does not run the tests.</p>
+<p>Run <code>./test.sh</code> and push the intended commit to the default branch before
+releasing. Sign in to the GitHub CLI. By default, <code>./publish.sh</code> requests the
+next patch version. Pass a tag such as <code>v1.4.0</code> to select a version explicitly.</p>
+<p>The script dispatches <code>release.yml</code> on GitHub. The workflow creates the tag
+if needed, builds the tagged source and attaches the wheel and sdist to a
+GitHub release. Its <code>pypi</code> job uploads those artifacts through PyPI Trusted
+Publishing using the GitHub environment named <code>pypi</code>.</p>
 
 
 

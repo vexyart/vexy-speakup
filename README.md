@@ -185,17 +185,17 @@ chunk context, gains, file outputs, disk use and model-score limitations.
 ./build.sh                # docs into docs/, then uv build and twine check
 ./build.sh docs           # documentation only (src_docs/build.sh)
 ./build.sh package        # package only
-./publish.sh              # gitnextver tag, build, uv publish to PyPI
+./publish.sh              # dispatch the GitHub Actions release workflow
 ```
 
-Tag releases with `uvx gitnextver`. Untagged commits build as development
-versions with a local segment, which PyPI rejects. The generated
-`src/vexy_speakup/__version__.py` is ignored by git.
+Run `./test.sh` and push the intended release commit to the default branch.
+With the GitHub CLI signed in, `./publish.sh` requests the next patch release.
+Pass an explicit tag (for example, `./publish.sh v1.4.0`) to select a version.
+GitHub Actions builds the tagged source, creates the GitHub release and uploads
+the wheel and sdist to PyPI through Trusted Publishing.
 
-`./publish.sh` runs `uvx gitnextver`, which commits all changes, creates the
-next `vX.Y.Z` tag and pushes. It stops if HEAD carries no such tag, then builds
-the package and runs `uv publish`. It does not run the tests, so run
-`./test.sh` first.
+Untagged commits build as development versions with a local segment, which
+PyPI rejects. The generated `src/vexy_speakup/__version__.py` is ignored by git.
 
 The documentation source is in `src_docs/md/`. Run `./build.sh docs` for a
 strict ProperDocs build with fly-january 0.2.1 and native navigation

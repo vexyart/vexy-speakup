@@ -2,6 +2,9 @@
 # Changelog
 
 ## Unreleased
+
+- PyPI releases use GitHub Actions Trusted Publishing. The PyPI project owner must configure the publisher for `vexyart/vexy-speakup`, workflow `release.yml`, environment `pypi`.
+- Built and twine-checked the wheel and sdist, inspected their contents and verified each clean install by running `vexy-speakup version` from outside the checkout.
 - Site now uses the fly-january 0.2.1 theme (chrome: none).
 - Default chain is now `auto-gate-stageone` with `brightness_db = 3` (was `dx35`,
   0), the result of listening on dual-mono speech. It needs VoiceGate2,
@@ -119,18 +122,35 @@
 - Verified the legacy speech-polish source and test coverage before retiring
   duplicate scripts; preserve historical recording evidence privately.
 
+## Issue 101 verification (v1.0.2)
+
+- Retired nine duplicate scripts after auditing every legacy function and running 56 tests.
+- Fixed scanner paths, output and timeouts. Pluginary passed 23 native tests and completed the rescan of 1,073 entries.
+- Verified 26 research records in the Pluginary database and annotations on 16 scanned plugins (`issues/101-research.md`).
+- Verified TOML settings and candidate definitions with isolated `config path/init/show` runs.
+- Checked bounded chunk workers for concurrency, per-speaker overrides, fragment coverage and failure propagation in the 59-test suite.
+- Rendered four comparison chains on real speech, including the GPL and brighter variants. Each produced 576,000 finite stereo frames.
+- Verified eight saved batch outputs with distinct suffixes. Resume skipped all eight after checking their hashes.
+- Verified folder selection, playback, scheduling and reload with 24 real preview clips in the browser.
+- Verified per-file speaker choices in two full renders. Identical speaker IDs retained different brightness settings across files.
+- Checked the shared vexy-subs turns format against offline MLX diarization with two speaker IDs and 11 intervals.
+- Verified commercial and GPL plugin renders, output hashes, video packet hashes and timestamps on real recordings.
+- Completed the issue review after 80 tests passed, Ruff passed, and strict documentation and package builds succeeded.
+
 ## 1.0.0
+
+- Published the first release as 1.0.0 (tag `v1.0.0`, commit `62bf2de`, wheel and sdist on PyPI).
 - Added `build.sh` (test, build, twine check) and `publish.sh` (test,
   gitnextver tag, build, `uv publish` with retry on rate limits).
 - Ported the `speech-polish` script collection into the installable
-  `vexy_speakup` src-layout package with a `vexy-speakup` Fire CLI.
+  `vexy_speakup` src-layout package with a `vexy-speakup` Fire CLI (commit `5980dc4`, 33 tests passed).
 - Versions now come from git tags through hatch-vcs; the generated
-  `__version__.py` is ignored by git. Added a `version` command.
+  `__version__.py` is ignored by git. Added a `version` command (commit `5980dc4`).
 - Plugin workers run as `python -m vexy_speakup`, so the installed package
   needs no adjacent script.
 - Replaced machine-specific paths: plugins default to
   `/Library/Audio/Plug-Ins/VST3` (`VEXY_SPEAKUP_PLUGIN_ROOT`), and local model
-  adapters come from `VEXY_SPEAKUP_TTS_ROOT`, resolved only when used.
+  adapters come from `VEXY_SPEAKUP_TTS_ROOT`, resolved only when used (commit `5980dc4`, `tests/test_locations.py`).
 - Folded the standalone plugin probe script into the `probe` command.
 
 ## 2026-10-18: documentation plugins

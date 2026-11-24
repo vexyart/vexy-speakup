@@ -198,5 +198,5 @@ the package and runs `uv publish`. It does not run the tests, so run
 `./test.sh` first.
 
 The documentation source is in `src_docs/md/`. Run `./build.sh docs` for a
-strict ProperDocs build with fly-january 0.1.1 and native navigation
+strict ProperDocs build with fly-january 0.2.1 and native navigation
 (`extra.fly.chrome: none`). GitHub Pages serves the result from `docs/`.

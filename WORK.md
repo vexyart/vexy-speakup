@@ -230,7 +230,7 @@ four corresponding source archives are present, and LFS integrity passed.
 
 ## 2026-11-24 — Documentation theme
 
-- `./build.sh docs` rebuilt the Pages site with fly-january 0.1.1 on Python
+- `./build.sh docs` rebuilt the Pages site with fly-january 0.2.1 on Python
   3.13. The strict build exited 0 with no warnings.
 - All 16 HTML files use the published Fly stylesheet and scripts, native
   navigation and the stock MaterialX favicon. The chrome uses the labels

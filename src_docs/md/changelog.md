@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Site now uses the fly-january 0.1.1 theme (chrome: none).
+- Site now uses the fly-january 0.2.1 theme (chrome: none).
 - Fixed a mastering bug: with a latent master plugin (Ozone 12 Maximizer,
   PodcastPlugins MASTER), audio after the first 10 seconds was delayed by the
   plugin latency (10–17 ms) with a short silence at the 10-second mark. Outputs
